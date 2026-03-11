@@ -63,7 +63,7 @@ fi
 # Test 3: Verify signature format
 echo ""
 echo "Test 3: Verifying signature format..."
-INVALID_SIGS=$(jq -r '.[] | .[]' "$TEMP_OUTPUT" | grep -v -E '^[a-zA-Z_][a-zA-Z0-9_]*\(' || true)
+INVALID_SIGS=$(jq -r '.[] | .[]' "$TEMP_OUTPUT" | grep -v -E '^[0-9]+-[0-9]+: [a-zA-Z_][a-zA-Z0-9_]*\(' || true)
 
 if [ -z "$INVALID_SIGS" ]; then
     echo "✓ Test 3 PASSED: All signatures have valid format"
