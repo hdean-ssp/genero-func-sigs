@@ -39,6 +39,8 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
 
         delete param_order
         delete param_types
+        delete return_order
+        return_count = 0  # Initialize return count to 0
         for (i = 1; i <= param_count; i++) {
             if (split(param_arr[i], parts, /[ \t]+/) >= 2) {
                 name = parts[1]
