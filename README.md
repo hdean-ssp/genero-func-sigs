@@ -22,17 +22,22 @@ The script will generate a `workspace.json` file containing function signatures 
 
 ### Output Format
 
-Each function signature includes:
-- File path
-- Function signature with parameter names/types and return names/types
+The script generates a `workspace.json` file with function signatures grouped by file:
 
 Example:
 ```json
-[
-  {"file":"./src/utils.4gl","signature":"calculate(amount INTEGER, label STRING):result DECIMAL, status INTEGER"},
-  {"file":"./src/auth.4gl","signature":"validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING"}
-]
+{
+  "./src/utils.4gl": [
+    "calculate(amount INTEGER, label STRING):result DECIMAL, status INTEGER",
+    "format_date(input_date DATE):formatted STRING"
+  ],
+  "./src/auth.4gl": [
+    "validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING"
+  ]
+}
 ```
+
+Each signature includes parameter names/types and return names/types in a readable format.
 
 ## Testing
 

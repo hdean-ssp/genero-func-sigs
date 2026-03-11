@@ -113,8 +113,7 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
         }
 
         # Print only the signature
-        printf "{\"file\":\"%s\",\"signature\":\"%s\"}\n",
-               file, function_sig
+        printf "%s\t%s\n", file, function_sig
 
         in_function = 0
         delete vars
@@ -125,9 +124,38 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
     ' "$file" >> "$TEMP_FILE"
 done
 
-# Create final JSON array
-echo '[' > workspace.json
-cat "$TEMP_FILE" | sed '$!s/$/,/' >> workspace.json
-echo ']' >> workspace.json
+# Group signatures by file and create JSON object
+awk -F'\t' '
+BEGIN {
+    print "{"
+    first_file = 1
+}
+{
+    if (current_file != $1) {
+        if (current_file != "") {
+            # Close previous file array
+            print "  ],"
+        }
+        current_file = $1
+        if (!first_file) {
+            # Not needed, comma already added above
+        }
+        first_file = 0
+        printf "  \"%s\": [\n", current_file
+        first_sig = 1
+    }
+    if (!first_sig) {
+        print ","
+    }
+    printf "    \"%s\"", $2
+    first_sig = 0
+}
+END {
+    if (current_file != "") {
+        print "\n  ]"
+    }
+    print "}"
+}
+' "$TEMP_FILE" > workspace.json
 
 rm "$TEMP_FILE"

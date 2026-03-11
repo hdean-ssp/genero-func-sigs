@@ -20,8 +20,8 @@ cp workspace.json "$TEMP_OUTPUT"
 SORTED_EXPECTED=$(mktemp)
 SORTED_ACTUAL=$(mktemp)
 
-jq -S 'sort_by(.file, .signature)' "$EXPECTED_OUTPUT" > "$SORTED_EXPECTED"
-jq -S 'sort_by(.file, .signature)' "$TEMP_OUTPUT" > "$SORTED_ACTUAL"
+jq -S 'to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort)' "$EXPECTED_OUTPUT" > "$SORTED_EXPECTED"
+jq -S 'to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort)' "$TEMP_OUTPUT" > "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
     echo "✓ Test 1 PASSED: Output matches expected results"
@@ -48,13 +48,13 @@ bash "$SCRIPT" "$TEST_DIR/simple_functions.4gl"
 cp workspace.json "$SINGLE_FILE_OUTPUT"
 
 # Check that output contains only entries from simple_functions.4gl
-SIMPLE_COUNT=$(jq '[.[] | select(.file | contains("simple_functions.4gl"))] | length' "$SINGLE_FILE_OUTPUT")
-TOTAL_COUNT=$(jq 'length' "$SINGLE_FILE_OUTPUT")
+FILE_COUNT=$(jq 'keys | length' "$SINGLE_FILE_OUTPUT")
+SIMPLE_COUNT=$(jq '."./tests/simple_functions.4gl" | length' "$SINGLE_FILE_OUTPUT")
 
-if [ "$SIMPLE_COUNT" -eq "$TOTAL_COUNT" ] && [ "$TOTAL_COUNT" -eq 3 ]; then
-    echo "✓ Test 2 PASSED: Single file processing works correctly (found $TOTAL_COUNT functions)"
+if [ "$FILE_COUNT" -eq 1 ] && [ "$SIMPLE_COUNT" -eq 3 ]; then
+    echo "✓ Test 2 PASSED: Single file processing works correctly (found $SIMPLE_COUNT functions)"
 else
-    echo "✗ Test 2 FAILED: Expected 3 functions from simple_functions.4gl, got $TOTAL_COUNT"
+    echo "✗ Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got $FILE_COUNT files with $SIMPLE_COUNT functions"
     cat "$SINGLE_FILE_OUTPUT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
@@ -63,7 +63,7 @@ fi
 # Test 3: Verify signature format
 echo ""
 echo "Test 3: Verifying signature format..."
-INVALID_SIGS=$(jq -r '.[] | .signature' "$TEMP_OUTPUT" | grep -v -E '^[a-zA-Z_][a-zA-Z0-9_]*\(' || true)
+INVALID_SIGS=$(jq -r '.[] | .[]' "$TEMP_OUTPUT" | grep -v -E '^[a-zA-Z_][a-zA-Z0-9_]*\(' || true)
 
 if [ -z "$INVALID_SIGS" ]; then
     echo "✓ Test 3 PASSED: All signatures have valid format"
