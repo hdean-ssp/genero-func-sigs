@@ -13,7 +13,8 @@ echo ""
 
 # Test 1: Run against test directory
 echo "Test 1: Running script against test directory..."
-bash "$SCRIPT" "$TEST_DIR" > "$TEMP_OUTPUT"
+bash "$SCRIPT" "$TEST_DIR"
+cp workspace.json "$TEMP_OUTPUT"
 
 # Sort both files for comparison (find order may vary)
 SORTED_EXPECTED=$(mktemp)
@@ -35,7 +36,7 @@ else
     echo ""
     echo "Diff:"
     diff "$SORTED_EXPECTED" "$SORTED_ACTUAL" || true
-    rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL"
+    rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" workspace.json
     exit 1
 fi
 
@@ -43,7 +44,8 @@ fi
 echo ""
 echo "Test 2: Running script against a single file..."
 SINGLE_FILE_OUTPUT=$(mktemp)
-bash "$SCRIPT" "$TEST_DIR/simple_functions.4gl" > "$SINGLE_FILE_OUTPUT"
+bash "$SCRIPT" "$TEST_DIR/simple_functions.4gl"
+cp workspace.json "$SINGLE_FILE_OUTPUT"
 
 # Check that output contains only entries from simple_functions.4gl
 SIMPLE_COUNT=$(jq '[.[] | select(.file | contains("simple_functions.4gl"))] | length' "$SINGLE_FILE_OUTPUT")
@@ -54,7 +56,7 @@ if [ "$SIMPLE_COUNT" -eq "$TOTAL_COUNT" ] && [ "$TOTAL_COUNT" -eq 3 ]; then
 else
     echo "✗ Test 2 FAILED: Expected 3 functions from simple_functions.4gl, got $TOTAL_COUNT"
     cat "$SINGLE_FILE_OUTPUT"
-    rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT"
+    rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 fi
 
@@ -68,12 +70,13 @@ if [ -z "$INVALID_SIGS" ]; then
 else
     echo "✗ Test 3 FAILED: Found invalid signature formats:"
     echo "$INVALID_SIGS"
-    rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT"
+    rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 fi
 
 # Cleanup
 rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT"
+rm -f workspace.json
 
 echo ""
 echo "=========================================="
