@@ -1,15 +1,89 @@
 {
   "./tests/complex_types.4gl": [
-    "3-14: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
-    "16-26: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT"
+    {
+      "name": "process_record",
+      "line": {"start": 3, "end": 14},
+      "signature": "3-14: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
+      "parameters": [
+        {"name": "rec", "type": "RECORD"},
+        {"name": "status_flag", "type": "CHAR(1)"}
+      ],
+      "returns": [
+        {"name": "success", "type": "SMALLINT"}
+      ]
+    },
+    {
+      "name": "get_date_range",
+      "line": {"start": 16, "end": 26},
+      "signature": "16-26: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
+      "parameters": [
+        {"name": "start_date", "type": "DATE"},
+        {"name": "end_date", "type": "DATE"}
+      ],
+      "returns": [
+        {"name": "days_between", "type": "INTEGER"},
+        {"name": "is_valid", "type": "SMALLINT"}
+      ]
+    }
   ],
   "./tests/multiple_returns.4gl": [
-    "3-15: calculate_stats(values ARRAY OF DECIMAL):total DECIMAL, average DECIMAL, count INTEGER",
-    "17-27: validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING"
+    {
+      "name": "calculate_stats",
+      "line": {"start": 3, "end": 15},
+      "signature": "3-15: calculate_stats(values ARRAY OF DECIMAL):total DECIMAL, average DECIMAL, count INTEGER",
+      "parameters": [
+        {"name": "values", "type": "ARRAY OF DECIMAL"}
+      ],
+      "returns": [
+        {"name": "total", "type": "DECIMAL"},
+        {"name": "average", "type": "DECIMAL"},
+        {"name": "count", "type": "INTEGER"}
+      ]
+    },
+    {
+      "name": "validate_user",
+      "line": {"start": 17, "end": 27},
+      "signature": "17-27: validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING",
+      "parameters": [
+        {"name": "username", "type": "STRING"},
+        {"name": "password", "type": "STRING"}
+      ],
+      "returns": [
+        {"name": "is_valid", "type": "SMALLINT"},
+        {"name": "error_msg", "type": "STRING"}
+      ]
+    }
   ],
   "./tests/simple_functions.4gl": [
-    "3-10: add_numbers(a INTEGER, b INTEGER):result INTEGER",
-    "12-19: get_user_name(user_id INTEGER):name STRING",
-    "21-23: no_params_no_return()"
+    {
+      "name": "add_numbers",
+      "line": {"start": 3, "end": 10},
+      "signature": "3-10: add_numbers(a INTEGER, b INTEGER):result INTEGER",
+      "parameters": [
+        {"name": "a", "type": "INTEGER"},
+        {"name": "b", "type": "INTEGER"}
+      ],
+      "returns": [
+        {"name": "result", "type": "INTEGER"}
+      ]
+    },
+    {
+      "name": "get_user_name",
+      "line": {"start": 12, "end": 19},
+      "signature": "12-19: get_user_name(user_id INTEGER):name STRING",
+      "parameters": [
+        {"name": "user_id", "type": "INTEGER"}
+      ],
+      "returns": [
+        {"name": "name", "type": "STRING"}
+      ]
+    },
+    {
+      "name": "no_params_no_return",
+      "line": {"start": 21, "end": 23},
+      "signature": "21-23: no_params_no_return()",
+      "parameters": [],
+      "returns": []
+    }
   ]
 }

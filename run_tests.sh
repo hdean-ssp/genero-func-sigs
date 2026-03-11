@@ -20,8 +20,8 @@ cp workspace.json "$TEMP_OUTPUT"
 SORTED_EXPECTED=$(mktemp)
 SORTED_ACTUAL=$(mktemp)
 
-jq -S 'to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort)' "$EXPECTED_OUTPUT" > "$SORTED_EXPECTED"
-jq -S 'to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort)' "$TEMP_OUTPUT" > "$SORTED_ACTUAL"
+jq -S 'to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort_by(.name))' "$EXPECTED_OUTPUT" > "$SORTED_EXPECTED"
+jq -S 'to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort_by(.name))' "$TEMP_OUTPUT" > "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
     echo "✓ Test 1 PASSED: Output matches expected results"
@@ -63,7 +63,7 @@ fi
 # Test 3: Verify signature format
 echo ""
 echo "Test 3: Verifying signature format..."
-INVALID_SIGS=$(jq -r '.[] | .[]' "$TEMP_OUTPUT" | grep -v -E '^[0-9]+-[0-9]+: [a-zA-Z_][a-zA-Z0-9_]*\(' || true)
+INVALID_SIGS=$(jq -r '.[][] | .signature' "$TEMP_OUTPUT" | grep -v -E '^[0-9]+-[0-9]+: [a-zA-Z_][a-zA-Z0-9_]*\(' || true)
 
 if [ -z "$INVALID_SIGS" ]; then
     echo "✓ Test 3 PASSED: All signatures have valid format"

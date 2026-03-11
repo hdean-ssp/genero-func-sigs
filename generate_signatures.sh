@@ -109,14 +109,15 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
             returns_str = returns_str (i > 1 ? ", " : "") var " " (type ? type : "unknown")
         }
 
-        # Create unique function signature: start-end: functionName(name type, ...):name type, ...
+        # Create signature string with line numbers
         function_sig = function_start_line "-" function_end_line ": " current_function "(" params_str ")"
         if (returns_str != "" && return_count > 0) {
             function_sig = function_sig ":" returns_str
         }
 
-        # Print only the signature
-        printf "%s\t%s\n", file, function_sig
+        # Print structured JSON
+        printf "{\"file\":\"%s\",\"name\":\"%s\",\"line\":{\"start\":%d,\"end\":%d},\"signature\":\"%s\",\"parameters\":[%s],\"returns\":[%s]}\n",
+               file, current_function, function_start_line, function_end_line, function_sig, params_json, returns_json
 
         in_function = 0
         delete vars
@@ -127,34 +128,44 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
     ' "$file" >> "$TEMP_FILE"
 done
 
-# Group signatures by file and create JSON object
-awk -F'\t' '
+# Group by file and create structured JSON
+awk '
 BEGIN {
     print "{"
     first_file = 1
 }
 {
-    if (current_file != $1) {
-        if (current_file != "") {
-            # Close previous file array
-            print "  ],"
-        }
-        current_file = $1
+    # Parse the JSON line
+    file_match = match($0, /"file":"([^"]+)"/, file_arr)
+    current_file = file_arr[1]
+    
+    if (last_file != current_file && last_file != "") {
+        # Close previous file array
+        print "  ],"
+        first_in_file = 1
+    }
+    
+    if (last_file != current_file) {
         if (!first_file) {
-            # Not needed, comma already added above
+            # Already printed comma above
         }
         first_file = 0
         printf "  \"%s\": [\n", current_file
-        first_sig = 1
+        first_in_file = 1
     }
-    if (!first_sig) {
+    
+    # Extract the function object (everything except file field)
+    gsub(/^\{"file":"[^"]+",/, "{", $0)
+    
+    if (!first_in_file) {
         print ","
     }
-    printf "    \"%s\"", $2
-    first_sig = 0
+    printf "    %s", $0
+    first_in_file = 0
+    last_file = current_file
 }
 END {
-    if (current_file != "") {
+    if (last_file != "") {
         print "\n  ]"
     }
     print "}"
