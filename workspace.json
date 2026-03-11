@@ -1,0 +1,9 @@
+[
+{"file":"./tests/simple_functions.4gl","signature":"add_numbers(a INTEGER, b INTEGER):result INTEGER"},
+{"file":"./tests/simple_functions.4gl","signature":"get_user_name(user_id INTEGER):name STRING"},
+{"file":"./tests/simple_functions.4gl","signature":"no_params_no_return(): unknown"},
+{"file":"./tests/complex_types.4gl","signature":"process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT"},
+{"file":"./tests/complex_types.4gl","signature":"get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT"},
+{"file":"./tests/multiple_returns.4gl","signature":"calculate_stats(values ARRAY):total DECIMAL, average DECIMAL, count INTEGER"},
+{"file":"./tests/multiple_returns.4gl","signature":"validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING"}
+]

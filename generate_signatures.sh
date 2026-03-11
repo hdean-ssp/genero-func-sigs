@@ -56,9 +56,13 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
 
     in_function && /^[ \t]*DEFINE / {
         sub(/^[ \t]*DEFINE[ \t]+/, "")
-        split($0, parts, /[ \t]+/)
-        var_name = parts[1]
-        var_type = parts[2]
+        # Extract variable name (first word)
+        match($0, /^[^ \t]+/)
+        var_name = substr($0, RSTART, RLENGTH)
+        # Extract type (everything after first whitespace, trimmed)
+        sub(/^[^ \t]+[ \t]+/, "")
+        var_type = $0
+        gsub(/^[ \t]+|[ \t]+$/, "", var_type)  # Trim whitespace
 
         if (var_name in param_types) {
             param_types[var_name] = var_type
@@ -102,7 +106,7 @@ find "$TARGET" -name "*.4gl" -print0 | while IFS= read -r -d $'\0' file; do
 
         # Create unique function signature: functionName(name type, ...):name type, ...
         function_sig = current_function "(" params_str ")"
-        if (returns_str != "") {
+        if (returns_str != "" && return_count > 0) {
             function_sig = function_sig ":" returns_str
         }
 
