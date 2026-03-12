@@ -103,6 +103,24 @@ This document outlines planned improvements and features for the Genero Function
 - `list-file-functions` - Functions in file
 - `list-file-modules` - Modules using file
 
+### Query Categories Overview
+
+The advanced queries are organized into logical categories:
+
+1. **Module Content Queries** - Find modules and their contents
+2. **Fuzzy Matching** - Approximate/similarity-based searches
+3. **Dependency Queries** - Analyze function and module relationships
+4. **Type-Based Queries** - Search by data types
+5. **Cross-Reference Queries** - Find usage across codebase
+6. **Analysis Queries** - Generate reports and metrics
+7. **Signature Pattern Queries** - Find functions by structure
+8. **Naming Convention Queries** - Enforce and analyze naming patterns
+9. **Complexity & Metrics Queries** - Identify code quality issues
+10. **Relationship & Impact Queries** - Analyze dependencies and impact
+11. **Export & Reporting Queries** - Generate various report formats
+12. **Search & Filter Queries** - Advanced search capabilities
+13. **Comparison & Diff Queries** - Compare code elements
+
 ### Planned Queries
 
 #### 3.1 Module Content Queries
@@ -190,6 +208,133 @@ This document outlines planned improvements and features for the Genero Function
   - Find files not used by any module
   - Identify orphaned code
 
+#### 3.7 Signature Pattern Queries
+- **`find-functions-by-parameter-count <count>`**
+  - Find all functions with exactly N parameters
+  - Useful for identifying simple vs. complex functions
+  - Help with API consistency analysis
+
+- **`find-functions-by-return-count <count>`**
+  - Find functions returning exactly N values
+  - Identify functions with multiple return values
+  - Useful for refactoring analysis
+
+- **`find-functions-with-no-parameters`**
+  - Find parameterless functions (procedures)
+  - Identify global state dependencies
+  - Useful for side-effect analysis
+
+- **`find-functions-with-no-returns`**
+  - Find void/procedure-style functions
+  - Identify functions that modify state
+  - Useful for pure function identification
+
+#### 3.8 Naming Convention Queries
+- **`find-functions-matching-pattern <regex>`**
+  - Find functions matching naming patterns
+  - Enforce naming conventions (get_*, set_*, etc.)
+  - Identify non-compliant functions
+
+- **`find-functions-by-prefix <prefix>`**
+  - Find all functions starting with prefix
+  - Group related functions
+  - Identify function families
+
+- **`find-functions-by-suffix <suffix>`**
+  - Find functions ending with suffix
+  - Identify function categories (e.g., _handler, _validator)
+  - Useful for architectural analysis
+
+#### 3.9 Complexity & Metrics Queries
+- **`find-complex-functions [threshold]`**
+  - Find functions exceeding complexity threshold
+  - Use line count, parameter count, return count
+  - Identify refactoring candidates
+
+- **`find-large-modules [threshold]`**
+  - Find modules with many files or functions
+  - Identify modules needing decomposition
+  - Useful for architecture review
+
+- **`find-functions-by-line-count <min> <max>`**
+  - Find functions within line count range
+  - Identify very short or very long functions
+  - Useful for code quality analysis
+
+#### 3.10 Relationship & Impact Queries
+- **`find-function-callers <function_name>`**
+  - Find all functions that call a specific function
+  - Show call chain depth
+  - Useful for impact analysis before changes
+
+- **`find-module-dependents <module_name>`**
+  - Find all modules depending on a module
+  - Show dependency depth
+  - Identify critical modules
+
+- **`find-shared-dependencies <module1> <module2>`**
+  - Find common dependencies between modules
+  - Identify coupling points
+  - Useful for refactoring decisions
+
+- **`find-isolated-functions`**
+  - Find functions with no dependencies
+  - Identify standalone utilities
+  - Useful for library extraction
+
+#### 3.11 Export & Reporting Queries
+- **`export-module-graph <module_name> [format]`**
+  - Export module dependency graph (JSON, DOT, SVG)
+  - Visualize module relationships
+  - Support for GraphViz rendering
+
+- **`export-function-report <function_name> [format]`**
+  - Export function details to JSON, CSV, or HTML
+  - Include signature, metrics, dependencies
+  - Useful for documentation generation
+
+- **`generate-codebase-report [format]`**
+  - Generate comprehensive codebase statistics
+  - Show module breakdown, function counts, metrics
+  - Export as JSON, CSV, or HTML report
+
+- **`generate-dependency-matrix`**
+  - Create module-to-module dependency matrix
+  - Show coupling metrics
+  - Identify circular dependencies
+
+#### 3.12 Search & Filter Queries
+- **`search-by-signature <pattern>`**
+  - Search function signatures using regex
+  - Find functions with specific parameter/return patterns
+  - Useful for API discovery
+
+- **`search-by-comment <pattern>`**
+  - Search function comments/documentation
+  - Find functions by description
+  - Requires comment extraction enhancement
+
+- **`filter-functions <criteria>`**
+  - Combine multiple filter criteria
+  - Example: `filter-functions "module=core AND type=INTEGER AND params>2"`
+  - Powerful query composition
+
+#### 3.13 Comparison & Diff Queries
+- **`compare-modules <module1> <module2>`**
+  - Compare two modules' structure and functions
+  - Show differences in dependencies
+  - Identify duplicate functionality
+
+- **`compare-function-signatures <func1> <func2>`**
+  - Compare two function signatures
+  - Identify parameter/return differences
+  - Useful for API compatibility checking
+
+- **`find-duplicate-functions`**
+  - Find functions with identical or similar signatures
+  - Identify code duplication
+  - Suggest consolidation candidates
+
 ## 4. Implementation Priority
 
 ### Phase 1 (High Priority)
@@ -197,6 +342,8 @@ This document outlines planned improvements and features for the Genero Function
 - [ ] Record type parsing
 - [ ] `find-modules-with-file` query
 - [ ] `find-closest-function` query
+- [ ] `find-functions-by-parameter-count` query
+- [ ] `find-functions-matching-pattern` query
 
 ### Phase 2 (Medium Priority)
 - [ ] Database schema file parsing
@@ -204,6 +351,9 @@ This document outlines planned improvements and features for the Genero Function
 - [ ] `find-function-dependencies` query
 - [ ] `find-functions-with-type` query
 - [ ] Module analysis query
+- [ ] `find-complex-functions` query
+- [ ] `find-function-callers` query
+- [ ] `export-module-graph` query
 
 ### Phase 3 (Lower Priority)
 - [ ] Live database introspection
@@ -211,6 +361,10 @@ This document outlines planned improvements and features for the Genero Function
 - [ ] Circular dependency detection
 - [ ] Dead code analysis
 - [ ] Performance metrics
+- [ ] `search-by-signature` query
+- [ ] `compare-modules` query
+- [ ] `find-duplicate-functions` query
+- [ ] `generate-dependency-matrix` query
 
 ## 5. Technical Considerations
 
