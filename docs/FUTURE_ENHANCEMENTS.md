@@ -2,34 +2,36 @@
 
 This document outlines planned improvements and features for the Genero Function Signatures project.
 
+## Completed Enhancements
+
+### ✅ Phase 0: Function Body Parsing (COMPLETED)
+
+**Status:** Complete and tested
+
+- ✅ Parse function bodies line-by-line to extract function calls
+- ✅ Identify all function calls within a function body
+- ✅ Track call locations (line numbers)
+- ✅ Handle nested calls and conditional calls
+- ✅ Support different call patterns (direct calls, assignments, control flow)
+- ✅ Build call graph database with caller-callee relationships
+- ✅ Store call metadata (line number, context)
+- ✅ Enable dependency queries (find-function-dependencies, find-function-dependents)
+
+**Implementation Details:**
+- AWK parser enhanced with 4 call detection patterns
+- Calls stored in JSON and SQLite database
+- New `calls` table with indexed lookups
+- Query functions: `find_function_dependencies()`, `find_function_dependents()`
+- Shell commands: `find-function-dependencies`, `find-function-dependents`
+- 61 function calls detected in test suite
+- All tests passing
+
+**See Also:**
+- [CALL_GRAPH_QUERIES.md](CALL_GRAPH_QUERIES.md) - Complete documentation
+- [QUICK_START_CALL_GRAPH.md](QUICK_START_CALL_GRAPH.md) - Quick start guide
+- [IMPLEMENTATION_SUMMARY.md](IMPLEMENTATION_SUMMARY.md) - Implementation details
+
 ## 1. Enhanced Parser & Call Graph Extraction
-
-### Current State
-- Extracts function signatures (name, parameters, returns)
-- Extracts basic Genero data types (INTEGER, STRING, DECIMAL, etc.)
-- Does NOT parse function bodies or track function calls
-- Limited support for complex types
-
-### Planned Improvements
-
-#### 1.0 Function Body Parsing (Foundation for Dependency Queries)
-- **Goal:** Parse function bodies line-by-line to extract function calls
-- **Scope:**
-  - Identify all function calls within a function body
-  - Track call locations (line numbers)
-  - Handle nested calls and conditional calls
-  - Support different call patterns (direct calls, method calls, etc.)
-- **Implementation:**
-  - Extend AWK parser to capture function body content
-  - Build call graph database with caller-callee relationships
-  - Store call metadata (line number, context)
-  - Enable dependency queries (find-function-dependencies, find-function-dependents)
-- **Challenges:**
-  - Distinguishing function calls from other identifiers
-  - Handling dynamic/indirect calls
-  - Dealing with preprocessor directives
-  - Performance impact on large functions
-- **Output:** New `calls` table in database with function_id, called_function_name, line_number
 
 ## 2. Enhanced Type Parser
 
@@ -366,13 +368,15 @@ The advanced queries are organized into logical categories:
 
 ## 5. Implementation Priority
 
-### Phase 0 (Foundation - Critical)
-- [ ] Function body parsing to extract function calls
-- [ ] Build call graph database (calls table)
-- [ ] Enable dependency queries (find-function-dependencies, find-function-dependents)
-- [ ] Store call metadata (line numbers, context)
+### Phase 0 (Foundation - COMPLETED ✅)
+- ✅ Function body parsing to extract function calls
+- ✅ Build call graph database (calls table)
+- ✅ Enable dependency queries (find-function-dependencies, find-function-dependents)
+- ✅ Store call metadata (line numbers, context)
 
 ### Phase 1 (High Priority)
+- [ ] Call resolution - Map called function names to actual functions
+- [ ] Recursive call detection - Identify and mark recursive calls
 - [ ] Enhanced type parser for LIKE types
 - [ ] Record type parsing
 - [ ] `find-modules-with-file` query

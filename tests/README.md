@@ -56,6 +56,9 @@ bash run_tests.sh
 
 # Test module dependency generator
 bash run_module_tests.sh
+
+# Test call graph functionality
+bash tests/test_call_graph.sh
 ```
 
 ## Adding New Test Codebases
@@ -104,3 +107,13 @@ The current test suite validates:
 - ✓ Mixed file types (.4gl, .c, .ec) - only .4gl extracted
 - ✓ Metadata generation
 - ✓ JSON formatting
+
+**Call Graph Generator:**
+- ✓ Direct CALL statement detection
+- ✓ LET assignment detection
+- ✓ Control flow condition detection (IF, WHILE, CASE)
+- ✓ Nested function call detection
+- ✓ Calls stored in JSON and SQLite database
+- ✓ find_function_dependencies query
+- ✓ find_function_dependents query
+- ✓ Query wrapper commands

@@ -4,6 +4,7 @@ shell script(s) to generate and index function signatures when run in a Genero c
 ## Features
 
 - Extracts function signatures from Genero/4GL files
+- **Extracts function calls and builds call graphs** (NEW)
 - Generates structured JSON output with metadata
 - Human-readable JSON formatting with proper indentation
 - Supports all Genero data types (basic, complex, and special types)
@@ -69,6 +70,10 @@ Example:
       "returns": [
         {"name": "result", "type": "DECIMAL"},
         {"name": "status", "type": "INTEGER"}
+      ],
+      "calls": [
+        {"name": "validate_amount", "line": 20},
+        {"name": "calculate_tax", "line": 32}
       ]
     }
   ]
@@ -83,6 +88,7 @@ The output includes:
   - `signature`: Human-readable signature string with line numbers
   - `parameters`: Array of parameter objects with name and type
   - `returns`: Array of return value objects with name and type
+  - `calls`: Array of function calls with name and line number (NEW)
 
 ## Testing
 
@@ -147,13 +153,43 @@ bash query.sh list-file-functions "path/to/file.4gl"
 
 See [QUERYING.md](QUERYING.md) for complete documentation.
 
+## Call Graph Queries
+
+Analyze function dependencies and call relationships:
+
+```bash
+# Find what a function calls
+bash query.sh find-function-dependencies process_request
+
+# Find what calls a function
+bash query.sh find-function-dependents log_message
+```
+
+**Use Cases:**
+- Impact analysis before changes
+- Dependency tracking
+- Dead code detection
+- Refactoring support
+
+See [QUICK_START_CALL_GRAPH.md](docs/QUICK_START_CALL_GRAPH.md) and [CALL_GRAPH_QUERIES.md](docs/CALL_GRAPH_QUERIES.md) for complete documentation.
+
+## Completed Enhancements
+
+- ✅ **Function Call Graph** - Extract and query function calls and dependencies
+  - Detects calls in CALL statements, LET assignments, control flow conditions, and nested calls
+  - Stores calls in JSON and SQLite database
+  - Query functions: `find-function-dependencies`, `find-function-dependents`
+  - See [CALL_GRAPH_QUERIES.md](docs/CALL_GRAPH_QUERIES.md) for details
+
 ## Planned Enhancements
 
 The project has an ambitious roadmap for future improvements:
 
+- **Call Resolution** - Map called function names to actual functions
+- **Recursive Call Detection** - Identify and mark recursive calls
 - **Enhanced Type Parser** - Support database LIKE types and RECORD types
 - **Database Schema Integration** - Parse schema files and validate types
-- **Advanced Queries** - Fuzzy matching, dependency analysis, unused code detection
+- **Advanced Queries** - Circular dependency detection, unused code analysis
 - **IDE Integration** - Plugins for popular editors
 - **Web Interface** - Browser-based code explorer
 

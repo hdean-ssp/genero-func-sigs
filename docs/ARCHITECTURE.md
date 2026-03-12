@@ -348,17 +348,16 @@ module_files (id, module_id, file_name, category)
 
 ## Future Enhancements
 
-1. **Incremental Updates** - Only process changed files
-2. **Cross-Module Analysis** - Track dependencies between modules
-3. **Call Graph Generation** - Build function call graphs
-4. **Documentation Generation** - Auto-generate API docs
-5. **IDE Plugins** - Direct integration with editors
-6. **Web Interface** - Browser-based code explorer
-7. **Performance Metrics** - Track function complexity
-8. **Change Tracking** - Version control integration
-9. **Enhanced Type Parser** - Support LIKE types and records
-10. **Database Schema Integration** - Parse and validate against schema
-11. **Advanced Queries** - Fuzzy matching, dependency analysis, etc.
+1. **Call Resolution** - Map called function names to actual functions
+2. **Recursive Call Detection** - Identify and mark recursive calls
+3. **Enhanced Type Parser** - Support LIKE types and records
+4. **Database Schema Integration** - Parse and validate against schema
+5. **Advanced Queries** - Circular dependency detection, dead code analysis
+6. **IDE Plugins** - Direct integration with editors
+7. **Web Interface** - Browser-based code explorer
+8. **Performance Metrics** - Track function complexity
+9. **Change Tracking** - Version control integration
+10. **Advanced Queries** - Fuzzy matching, dependency analysis, etc.
 
 See [FUTURE_ENHANCEMENTS.md](FUTURE_ENHANCEMENTS.md) for detailed roadmap.
 
