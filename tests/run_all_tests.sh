@@ -34,9 +34,16 @@ echo "=========================================="
 bash "$SCRIPT_DIR/run_module_tests.sh"
 echo ""
 
-# Test 3: Codebase Index Generator
+# Test 3: Call Graph Generator
 echo "=========================================="
-echo "Test 3: Codebase Index Generator"
+echo "Test 3: Call Graph Generator"
+echo "=========================================="
+bash "$SCRIPT_DIR/test_call_graph.sh"
+echo ""
+
+# Test 4: Codebase Index Generator
+echo "=========================================="
+echo "Test 4: Codebase Index Generator"
 echo "=========================================="
 echo "Generating signatures..."
 bash "$PROJECT_ROOT/src/generate_signatures.sh" "$SCRIPT_DIR/sample_codebase" > /dev/null
@@ -47,18 +54,18 @@ bash "$PROJECT_ROOT/src/generate_codebase_index.sh" > /dev/null
 echo "[PASS] Codebase index generated successfully"
 echo ""
 
-# Test 4: Database Tools
+# Test 5: Database Tools
 echo "=========================================="
-echo "Test 4: Database Tools"
+echo "Test 5: Database Tools"
 echo "=========================================="
 echo "Creating databases..."
 bash "$PROJECT_ROOT/query.sh" create-dbs > /dev/null
 echo "[PASS] Databases created successfully"
 echo ""
 
-# Test 5: Query Functions
+# Test 6: Query Functions
 echo "=========================================="
-echo "Test 5: Query Functions"
+echo "Test 6: Query Functions"
 echo "=========================================="
 
 # Change to project root for database queries
@@ -120,9 +127,9 @@ fi
 
 echo ""
 
-# Test 6: File Sizes
+# Test 7: File Sizes
 echo "=========================================="
-echo "Test 6: File Sizes"
+echo "Test 7: File Sizes"
 echo "=========================================="
 echo "JSON files:"
 ls -lh workspace.json modules.json codebase_index.json | awk '{print "  " $9 ": " $5}'
@@ -148,6 +155,7 @@ echo ""
 echo "Summary:"
 echo "  [PASS] Function signature generation"
 echo "  [PASS] Module dependency generation"
+echo "  [PASS] Call graph generation"
 echo "  [PASS] Codebase index generation"
 echo "  [PASS] Database creation"
 echo "  [PASS] Query functions"
