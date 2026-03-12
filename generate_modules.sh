@@ -193,13 +193,13 @@ TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
         else
             echo ","
         fi
-        echo "$line" | jq -c '.'
+        echo "$line"
     done < "$TEMP_FILE"
     
     echo ""
     echo "  ]"
     echo "}"
-} | jq '.' > "$OUTPUT_FILE"
+} > "$OUTPUT_FILE"
 
 if [[ "$VERBOSE" == "1" ]]; then
     echo "Generated $OUTPUT_FILE successfully" >&2

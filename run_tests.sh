@@ -16,13 +16,33 @@ echo "Test 1: Running script against test directory..."
 bash "$SCRIPT" "$TEST_DIR"
 cp workspace.json "$TEMP_OUTPUT"
 
-# Sort both files for comparison (find order may vary)
+# Sort both files for comparison using Python
 SORTED_EXPECTED=$(mktemp)
 SORTED_ACTUAL=$(mktemp)
 
-# Remove metadata for comparison (it contains timestamps)
-jq -S 'del(._metadata) | to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort_by(.name))' "$EXPECTED_OUTPUT" > "$SORTED_EXPECTED"
-jq -S 'del(._metadata) | to_entries | sort_by(.key) | from_entries | with_entries(.value |= sort_by(.name))' "$TEMP_OUTPUT" > "$SORTED_ACTUAL"
+python3 << 'PYTHON_SCRIPT'
+import json
+import sys
+
+def sort_json(input_file, output_file):
+    with open(input_file, 'r') as f:
+        data = json.load(f)
+    
+    # Remove metadata
+    data.pop('_metadata', None)
+    
+    # Sort all entries
+    sorted_data = {}
+    for key in sorted(data.keys()):
+        sorted_data[key] = sorted(data[key], key=lambda x: x.get('name', ''))
+    
+    with open(output_file, 'w') as f:
+        json.dump(sorted_data, f, sort_keys=True, indent=2)
+
+sort_json(sys.argv[1], sys.argv[2])
+sort_json(sys.argv[3], sys.argv[4])
+PYTHON_SCRIPT
+"$EXPECTED_OUTPUT" "$SORTED_EXPECTED" "$TEMP_OUTPUT" "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
     echo "✓ Test 1 PASSED: Output matches expected results"
@@ -49,64 +69,117 @@ bash "$SCRIPT" "$TEST_DIR/simple_functions.4gl"
 cp workspace.json "$SINGLE_FILE_OUTPUT"
 
 # Check that output contains only entries from simple_functions.4gl (excluding metadata)
-FILE_COUNT=$(jq 'del(._metadata) | keys | length' "$SINGLE_FILE_OUTPUT")
-SIMPLE_COUNT=$(jq '."./tests/sample_codebase/simple_functions.4gl" | length' "$SINGLE_FILE_OUTPUT")
+python3 << 'PYTHON_SCRIPT'
+import json
+import sys
 
-if [ "$FILE_COUNT" -eq 1 ] && [ "$SIMPLE_COUNT" -eq 3 ]; then
-    echo "✓ Test 2 PASSED: Single file processing works correctly (found $SIMPLE_COUNT functions)"
-else
-    echo "✗ Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got $FILE_COUNT files with $SIMPLE_COUNT functions"
+with open(sys.argv[1], 'r') as f:
+    data = json.load(f)
+
+data.pop('_metadata', None)
+file_count = len(data)
+simple_count = len(data.get('./tests/sample_codebase/simple_functions.4gl', []))
+
+if file_count == 1 and simple_count == 3:
+    print(f"✓ Test 2 PASSED: Single file processing works correctly (found {simple_count} functions)")
+    sys.exit(0)
+
+print(f"✗ Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got {file_count} files with {simple_count} functions")
+sys.exit(1)
+PYTHON_SCRIPT
+"$SINGLE_FILE_OUTPUT" || {
     cat "$SINGLE_FILE_OUTPUT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
-fi
+}
 
 # Test 3: Verify signature format
 echo ""
 echo "Test 3: Verifying signature format..."
-INVALID_SIGS=$(jq -r 'del(._metadata) | .[][] | .signature' "$TEMP_OUTPUT" | grep -v -E '^[0-9]+-[0-9]+: [a-zA-Z_][a-zA-Z0-9_]*\(' || true)
+python3 << 'PYTHON_SCRIPT'
+import json
+import re
+import sys
 
-if [ -z "$INVALID_SIGS" ]; then
-    echo "✓ Test 3 PASSED: All signatures have valid format"
-else
-    echo "✗ Test 3 FAILED: Found invalid signature formats:"
-    echo "$INVALID_SIGS"
+with open(sys.argv[1], 'r') as f:
+    data = json.load(f)
+
+data.pop('_metadata', None)
+
+invalid_sigs = []
+for file_funcs in data.values():
+    for func in file_funcs:
+        sig = func.get('signature', '')
+        if not re.match(r'^\d+-\d+: [a-zA-Z_][a-zA-Z0-9_]*\(', sig):
+            invalid_sigs.append(sig)
+
+if not invalid_sigs:
+    print("✓ Test 3 PASSED: All signatures have valid format")
+    sys.exit(0)
+
+print("✗ Test 3 FAILED: Found invalid signature formats:")
+for sig in invalid_sigs:
+    print(f"  {sig}")
+sys.exit(1)
+PYTHON_SCRIPT
+"$TEMP_OUTPUT" || {
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
-fi
+}
 
 # Test 4: Verify function count
 echo ""
 echo "Test 4: Verifying total function count..."
-EXPECTED_FUNCTION_COUNT=$(jq 'del(._metadata) | [.[] | length] | add' "$EXPECTED_OUTPUT")
-ACTUAL_FUNCTION_COUNT=$(jq 'del(._metadata) | [.[] | length] | add' "$TEMP_OUTPUT")
+python3 << 'PYTHON_SCRIPT'
+import json
+import sys
 
-if [ "$EXPECTED_FUNCTION_COUNT" -eq "$ACTUAL_FUNCTION_COUNT" ]; then
-    echo "✓ Test 4 PASSED: Found $ACTUAL_FUNCTION_COUNT functions as expected"
-else
-    echo "✗ Test 4 FAILED: Expected $EXPECTED_FUNCTION_COUNT functions, got $ACTUAL_FUNCTION_COUNT"
+with open(sys.argv[1], 'r') as f:
+    expected = json.load(f)
+with open(sys.argv[2], 'r') as f:
+    actual = json.load(f)
+
+expected.pop('_metadata', None)
+actual.pop('_metadata', None)
+
+expected_count = sum(len(funcs) for funcs in expected.values())
+actual_count = sum(len(funcs) for funcs in actual.values())
+
+if expected_count == actual_count:
+    print(f"✓ Test 4 PASSED: Found {actual_count} functions as expected")
+    sys.exit(0)
+
+print(f"✗ Test 4 FAILED: Expected {expected_count} functions, got {actual_count}")
+sys.exit(1)
+PYTHON_SCRIPT
+"$EXPECTED_OUTPUT" "$TEMP_OUTPUT" || {
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
-fi
+}
 
 # Test 5: Verify metadata structure
 echo ""
 echo "Test 5: Verifying metadata structure..."
-if jq -e '._metadata' "$TEMP_OUTPUT" > /dev/null 2>&1; then
-    METADATA_VALID=$(jq '._metadata | has("version") and has("generated") and has("files_processed")' "$TEMP_OUTPUT")
-    if [ "$METADATA_VALID" = "true" ]; then
-        FILES_PROCESSED=$(jq '._metadata.files_processed' "$TEMP_OUTPUT")
-        echo "✓ Test 5 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)"
-    else
-        echo "✗ Test 5 FAILED: Metadata structure is incomplete"
-        rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
-        exit 1
-    fi
-else
-    echo "✗ Test 5 FAILED: Metadata is missing"
+python3 << 'PYTHON_SCRIPT'
+import json
+import sys
+
+with open(sys.argv[1], 'r') as f:
+    data = json.load(f)
+
+if '_metadata' in data:
+    metadata = data['_metadata']
+    if all(k in metadata for k in ['version', 'generated', 'files_processed']):
+        print(f"✓ Test 5 PASSED: Metadata structure is valid (processed {metadata['files_processed']} files)")
+        sys.exit(0)
+
+print("✗ Test 5 FAILED: Metadata structure is incomplete")
+sys.exit(1)
+PYTHON_SCRIPT
+"$TEMP_OUTPUT" || {
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
-fi
+}
 
 # Cleanup
 rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT"

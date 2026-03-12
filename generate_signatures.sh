@@ -169,67 +169,51 @@ done
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
 # Group by file and create structured JSON with metadata
-awk -v version="$VERSION" -v timestamp="$TIMESTAMP" -v total_files="$TOTAL_FILES" '
-BEGIN {
-    print "{"
-    printf "  \"_metadata\": {\n"
-    printf "    \"version\": \"%s\",\n", version
-    printf "    \"generated\": \"%s\",\n", timestamp
-    printf "    \"files_processed\": %d\n", total_files
-    printf "  },\n"
-    first_file = 1
-    has_functions = 0
+python3 << 'PYTHON_SCRIPT'
+import json
+import sys
+from datetime import datetime
+
+VERSION = "1.0.0"
+TIMESTAMP = sys.argv[1] if len(sys.argv) > 1 else datetime.utcnow().isoformat() + "Z"
+TOTAL_FILES = int(sys.argv[2]) if len(sys.argv) > 2 else 0
+TEMP_FILE = sys.argv[3] if len(sys.argv) > 3 else ""
+
+output = {
+    "_metadata": {
+        "version": VERSION,
+        "generated": TIMESTAMP,
+        "files_processed": TOTAL_FILES
+    }
 }
-{
-    # Skip empty lines or incomplete JSON
-    if (length($0) == 0 || $0 !~ /^{.*}$/) {
-        next
-    }
+
+try:
+    with open(TEMP_FILE, 'r') as f:
+        for line in f:
+            line = line.strip()
+            if not line or not line.startswith('{'):
+                continue
+            
+            try:
+                obj = json.loads(line)
+                file_path = obj.get('file')
+                if file_path:
+                    if file_path not in output:
+                        output[file_path] = []
+                    # Remove file field from object
+                    obj.pop('file', None)
+                    output[file_path].append(obj)
+            except json.JSONDecodeError:
+                continue
     
-    # Parse the JSON line
-    file_match = match($0, /"file":"([^"]+)"/, file_arr)
-    if (file_match == 0) {
-        next  # Skip lines without file field
-    }
+    with open("workspace.json", 'w') as f:
+        json.dump(output, f, indent=2)
     
-    has_functions = 1
-    current_file = file_arr[1]
-    
-    if (last_file != current_file && last_file != "") {
-        # Close previous file array
-        print "  ],"
-        first_in_file = 1
-    }
-    
-    if (last_file != current_file) {
-        if (!first_file) {
-            # Already printed comma above
-        }
-        first_file = 0
-        printf "  \"%s\": [\n", current_file
-        first_in_file = 1
-    }
-    
-    # Extract the function object (everything except file field)
-    gsub(/^\{"file":"[^"]+",/, "{", $0)
-    
-    if (!first_in_file) {
-        print ","
-    }
-    printf "    %s", $0
-    first_in_file = 0
-    last_file = current_file
-}
-END {
-    if (has_functions && last_file != "") {
-        print "\n  ]"
-    }
-    print "}"
-}
-' "$TEMP_FILE" | jq '.' > "$OUTPUT_FILE" 2>/dev/null || {
-    # If jq fails, create a minimal valid JSON
-    echo "{\"_metadata\":{\"version\":\"$VERSION\",\"generated\":\"$TIMESTAMP\",\"files_processed\":$TOTAL_FILES}}" > "$OUTPUT_FILE"
-}
+except Exception as e:
+    print(f"Error: {e}", file=sys.stderr)
+    sys.exit(1)
+PYTHON_SCRIPT
+"$TIMESTAMP" "$TOTAL_FILES" "$TEMP_FILE"
 
 if [[ "$VERBOSE" == "1" ]]; then
     echo "Generated $OUTPUT_FILE successfully" >&2
