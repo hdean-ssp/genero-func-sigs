@@ -395,7 +395,7 @@
       ]
     }
   ],
-  "./tests/sample_codebase/complex_types.4gl": [
+  "./tests/sample_codebase/lib/complex_types.4gl": [
     {
       "name": "process_record",
       "line": {

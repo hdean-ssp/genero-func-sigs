@@ -6,30 +6,36 @@ This directory contains test codebases for validating the Genero function signat
 
 ```
 tests/
-├── sample_codebase/          # Sample Genero codebase with various test cases
-│   ├── *.4gl                 # Genero 4GL source files (function signature tests)
-│   ├── *.m3                  # Genero module makefiles (module dependency tests)
-│   ├── expected_output.json  # Expected output for generate_signatures.sh
-│   └── expected_modules.json # Expected output for generate_modules.sh
-└── README.md                 # This file
+├── sample_codebase/              # Sample Genero codebase with nested structure
+│   ├── *.4gl                     # Main 4GL source files (6 files)
+│   ├── lib/                      # Library subdirectory
+│   │   └── complex_types.4gl     # Library file
+│   ├── modules/                  # Module makefiles directory
+│   │   └── *.m3                  # Module definition files (9 files)
+│   ├── expected_output.json      # Expected output for generate_signatures.sh
+│   ├── expected_modules.json     # Expected output for generate_modules.sh
+│   └── expected_index.json       # Expected output for generate_codebase_index.sh
+└── README.md                     # This file
 ```
 
 ## Test Codebases
 
 ### sample_codebase
 
-A comprehensive test codebase containing:
+A comprehensive test codebase with realistic directory structure:
 
-**4GL Files (23 functions across 7 files):**
+**Main Directory (6 .4gl files):**
 - `simple_functions.4gl` - Basic parameter and return types
-- `complex_types.4gl` - RECORD, DATE, ARRAY types
 - `multiple_returns.4gl` - Functions returning multiple values
-- `edge_cases.4gl` - Long parameters, inline returns, mixed case
-- `whitespace_variations.4gl` - Various spacing patterns
-- `special_types.4gl` - INTERVAL, TEXT, MONEY, SERIAL, BOOLEAN, DYNAMIC ARRAY
 - `no_returns.4gl` - Procedure-style functions without returns
+- `whitespace_variations.4gl` - Various spacing patterns
+- `edge_cases.4gl` - Long parameters, inline returns, mixed case
+- `special_types.4gl` - INTERVAL, TEXT, MONEY, SERIAL, BOOLEAN, DYNAMIC ARRAY
 
-**M3 Files (8 modules with 132 total dependencies):**
+**lib/ Subdirectory (1 .4gl file):**
+- `complex_types.4gl` - RECORD, DATE, ARRAY types
+
+**modules/ Subdirectory (9 .m3 files):**
 - `test.m3` - Real-world example (85 L4GLS, 6 U4GLS, 2 4GLS)
 - `multiline.m3` - Multi-line continuations (8, 3, 3)
 - `single_line.m3` - Single-line assignments (3, 1, 1)
@@ -38,6 +44,7 @@ A comprehensive test codebase containing:
 - `mixed_files.m3` - Mixed file types (2, 1, 2)
 - `minimal.m3` - Minimal module (0, 0, 2)
 - `empty.m3` - Empty lists (0, 0, 0)
+- `test_mapping.m3` - Tests file-to-module mapping (2, 1, 2)
 
 ## Running Tests
 
@@ -56,8 +63,9 @@ bash run_module_tests.sh
 To add a new test codebase:
 
 1. Create a new directory under `tests/` (e.g., `tests/my_codebase/`)
-2. Add your test `.4gl` and/or `.m3` files
-3. Generate expected outputs:
+2. Add your test `.4gl` files (in root and/or subdirectories)
+3. Create a `modules/` subdirectory and add `.m3` files
+4. Generate expected outputs:
    ```bash
    # For function signatures
    bash generate_signatures.sh ./tests/my_codebase
@@ -66,8 +74,12 @@ To add a new test codebase:
    # For module dependencies
    bash generate_modules.sh ./tests/my_codebase
    jq 'del(._metadata)' modules.json > tests/my_codebase/expected_modules.json
+   
+   # For unified index
+   bash generate_codebase_index.sh
+   jq 'del(._metadata)' codebase_index.json > tests/my_codebase/expected_index.json
    ```
-4. Update test scripts to include the new codebase
+5. Update test scripts to include the new codebase
 
 ## Test Coverage
 

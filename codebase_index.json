@@ -1,0 +1,629 @@
+{
+  "_metadata": {
+    "version": "1.0.0",
+    "generated": "2026-03-12T10:40:56Z",
+    "source_files": {
+      "workspace": {
+        "version": "1.0.0",
+        "generated": "2026-03-12T10:40:37Z",
+        "files_processed": 7
+      },
+      "modules": {
+        "version": "1.0.0",
+        "generated": "2026-03-12T10:40:50Z",
+        "files_processed": 9
+      }
+    }
+  },
+  "files": {
+    "file_no_returns": {
+      "path": "./tests/sample_codebase/no_returns.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "display_message",
+          "line": {
+            "start": 3,
+            "end": 7
+          },
+          "signature": "3-7: display_message(msg STRING)",
+          "parameters": [
+            {
+              "name": "msg",
+              "type": "STRING"
+            }
+          ],
+          "returns": []
+        },
+        {
+          "name": "update_database",
+          "line": {
+            "start": 9,
+            "end": 15
+          },
+          "signature": "9-15: update_database(id INTEGER, value STRING)",
+          "parameters": [
+            {
+              "name": "id",
+              "type": "INTEGER"
+            },
+            {
+              "name": "value",
+              "type": "STRING"
+            }
+          ],
+          "returns": []
+        },
+        {
+          "name": "log_error",
+          "line": {
+            "start": 17,
+            "end": 22
+          },
+          "signature": "17-22: log_error(error_code INTEGER, error_text VARCHAR(100))",
+          "parameters": [
+            {
+              "name": "error_code",
+              "type": "INTEGER"
+            },
+            {
+              "name": "error_text",
+              "type": "VARCHAR(100)"
+            }
+          ],
+          "returns": []
+        },
+        {
+          "name": "initialize_system",
+          "line": {
+            "start": 24,
+            "end": 26
+          },
+          "signature": "24-26: initialize_system()",
+          "parameters": [],
+          "returns": []
+        }
+      ]
+    },
+    "file_special_types": {
+      "path": "./tests/sample_codebase/special_types.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "process_interval",
+          "line": {
+            "start": 3,
+            "end": 9
+          },
+          "signature": "3-9: process_interval(time_span INTERVAL DAY TO HOUR):result INTEGER",
+          "parameters": [
+            {
+              "name": "time_span",
+              "type": "INTERVAL DAY TO HOUR"
+            }
+          ],
+          "returns": [
+            {
+              "name": "result",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "handle_text_blob",
+          "line": {
+            "start": 11,
+            "end": 19
+          },
+          "signature": "11-19: handle_text_blob(content TEXT):status SMALLINT, row_count INTEGER",
+          "parameters": [
+            {
+              "name": "content",
+              "type": "TEXT"
+            }
+          ],
+          "returns": [
+            {
+              "name": "status",
+              "type": "SMALLINT"
+            },
+            {
+              "name": "row_count",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "calculate_money",
+          "line": {
+            "start": 21,
+            "end": 30
+          },
+          "signature": "21-30: calculate_money(amount1 MONEY(10,2), amount2 MONEY(10,2)):total MONEY(10,2), tax DECIMAL(5,2)",
+          "parameters": [
+            {
+              "name": "amount1",
+              "type": "MONEY(10,2)"
+            },
+            {
+              "name": "amount2",
+              "type": "MONEY(10,2)"
+            }
+          ],
+          "returns": [
+            {
+              "name": "total",
+              "type": "MONEY(10,2)"
+            },
+            {
+              "name": "tax",
+              "type": "DECIMAL(5,2)"
+            }
+          ]
+        },
+        {
+          "name": "get_serial_value",
+          "line": {
+            "start": 32,
+            "end": 39
+          },
+          "signature": "32-39: get_serial_value():new_id SERIAL, success BOOLEAN",
+          "parameters": [],
+          "returns": [
+            {
+              "name": "new_id",
+              "type": "SERIAL"
+            },
+            {
+              "name": "success",
+              "type": "BOOLEAN"
+            }
+          ]
+        },
+        {
+          "name": "process_dynamic_array",
+          "line": {
+            "start": 41,
+            "end": 50
+          },
+          "signature": "41-50: process_dynamic_array(data DYNAMIC ARRAY OF RECORD):count INTEGER",
+          "parameters": [
+            {
+              "name": "data",
+              "type": "DYNAMIC ARRAY OF RECORD"
+            }
+          ],
+          "returns": [
+            {
+              "name": "count",
+              "type": "INTEGER"
+            }
+          ]
+        }
+      ]
+    },
+    "file_simple_functions": {
+      "path": "./tests/sample_codebase/simple_functions.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "add_numbers",
+          "line": {
+            "start": 3,
+            "end": 10
+          },
+          "signature": "3-10: add_numbers(a INTEGER, b INTEGER):result INTEGER",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "INTEGER"
+            },
+            {
+              "name": "b",
+              "type": "INTEGER"
+            }
+          ],
+          "returns": [
+            {
+              "name": "result",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "get_user_name",
+          "line": {
+            "start": 12,
+            "end": 19
+          },
+          "signature": "12-19: get_user_name(user_id INTEGER):name STRING",
+          "parameters": [
+            {
+              "name": "user_id",
+              "type": "INTEGER"
+            }
+          ],
+          "returns": [
+            {
+              "name": "name",
+              "type": "STRING"
+            }
+          ]
+        },
+        {
+          "name": "no_params_no_return",
+          "line": {
+            "start": 21,
+            "end": 23
+          },
+          "signature": "21-23: no_params_no_return()",
+          "parameters": [],
+          "returns": []
+        }
+      ]
+    },
+    "file_whitespace_variations": {
+      "path": "./tests/sample_codebase/whitespace_variations.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "spaced_function",
+          "line": {
+            "start": 3,
+            "end": 10
+          },
+          "signature": "3-10: spaced_function(param1 INTEGER, param2 STRING):result CHAR(5)",
+          "parameters": [
+            {
+              "name": "param1",
+              "type": "INTEGER"
+            },
+            {
+              "name": "param2",
+              "type": "STRING"
+            }
+          ],
+          "returns": [
+            {
+              "name": "result",
+              "type": "CHAR(5)"
+            }
+          ]
+        },
+        {
+          "name": "compact_function",
+          "line": {
+            "start": 12,
+            "end": 19
+          },
+          "signature": "12-19: compact_function(a INTEGER, b INTEGER, c INTEGER):sum INTEGER",
+          "parameters": [
+            {
+              "name": "a",
+              "type": "INTEGER"
+            },
+            {
+              "name": "b",
+              "type": "INTEGER"
+            },
+            {
+              "name": "c",
+              "type": "INTEGER"
+            }
+          ],
+          "returns": [
+            {
+              "name": "sum",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "tabbed_function",
+          "line": {
+            "start": 21,
+            "end": 27
+          },
+          "signature": "21-27: tabbed_function(value DECIMAL)",
+          "parameters": [
+            {
+              "name": "value",
+              "type": "DECIMAL"
+            }
+          ],
+          "returns": []
+        }
+      ]
+    },
+    "file_edge_cases": {
+      "path": "./tests/sample_codebase/edge_cases.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "function_with_long_params",
+          "line": {
+            "start": 3,
+            "end": 13
+          },
+          "signature": "3-13: function_with_long_params(param1 VARCHAR(255), param2 DECIMAL(10,2), param3 DATETIME YEAR TO SECOND, param4 MONEY(16,2), param5 BYTE):result INTEGER",
+          "parameters": [
+            {
+              "name": "param1",
+              "type": "VARCHAR(255)"
+            },
+            {
+              "name": "param2",
+              "type": "DECIMAL(10,2)"
+            },
+            {
+              "name": "param3",
+              "type": "DATETIME YEAR TO SECOND"
+            },
+            {
+              "name": "param4",
+              "type": "MONEY(16,2)"
+            },
+            {
+              "name": "param5",
+              "type": "BYTE"
+            }
+          ],
+          "returns": [
+            {
+              "name": "result",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "inline_return",
+          "line": {
+            "start": 15,
+            "end": 19
+          },
+          "signature": "15-19: inline_return():status INTEGER",
+          "parameters": [],
+          "returns": [
+            {
+              "name": "status",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "function_with_comments",
+          "line": {
+            "start": 21,
+            "end": 28
+          },
+          "signature": "21-28: function_with_comments(value INTEGER):result STRING",
+          "parameters": [
+            {
+              "name": "value",
+              "type": "INTEGER"
+            }
+          ],
+          "returns": [
+            {
+              "name": "result",
+              "type": "STRING"
+            }
+          ]
+        },
+        {
+          "name": "mixed_case_FUNCTION",
+          "line": {
+            "start": 30,
+            "end": 36
+          },
+          "signature": "30-36: mixed_case_FUNCTION(MixedParam CHAR(10)):Output_Value SMALLINT",
+          "parameters": [
+            {
+              "name": "MixedParam",
+              "type": "CHAR(10)"
+            }
+          ],
+          "returns": [
+            {
+              "name": "Output_Value",
+              "type": "SMALLINT"
+            }
+          ]
+        }
+      ]
+    },
+    "file_complex_types": {
+      "path": "./tests/sample_codebase/lib/complex_types.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "process_record",
+          "line": {
+            "start": 3,
+            "end": 14
+          },
+          "signature": "3-14: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
+          "parameters": [
+            {
+              "name": "rec",
+              "type": "RECORD"
+            },
+            {
+              "name": "status_flag",
+              "type": "CHAR(1)"
+            }
+          ],
+          "returns": [
+            {
+              "name": "success",
+              "type": "SMALLINT"
+            }
+          ]
+        },
+        {
+          "name": "get_date_range",
+          "line": {
+            "start": 16,
+            "end": 26
+          },
+          "signature": "16-26: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
+          "parameters": [
+            {
+              "name": "start_date",
+              "type": "DATE"
+            },
+            {
+              "name": "end_date",
+              "type": "DATE"
+            }
+          ],
+          "returns": [
+            {
+              "name": "days_between",
+              "type": "INTEGER"
+            },
+            {
+              "name": "is_valid",
+              "type": "SMALLINT"
+            }
+          ]
+        }
+      ]
+    },
+    "file_multiple_returns": {
+      "path": "./tests/sample_codebase/multiple_returns.4gl",
+      "type": "4GLS",
+      "functions": [
+        {
+          "name": "calculate_stats",
+          "line": {
+            "start": 3,
+            "end": 15
+          },
+          "signature": "3-15: calculate_stats(values ARRAY OF DECIMAL):total DECIMAL, average DECIMAL, count INTEGER",
+          "parameters": [
+            {
+              "name": "values",
+              "type": "ARRAY OF DECIMAL"
+            }
+          ],
+          "returns": [
+            {
+              "name": "total",
+              "type": "DECIMAL"
+            },
+            {
+              "name": "average",
+              "type": "DECIMAL"
+            },
+            {
+              "name": "count",
+              "type": "INTEGER"
+            }
+          ]
+        },
+        {
+          "name": "validate_user",
+          "line": {
+            "start": 17,
+            "end": 27
+          },
+          "signature": "17-27: validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING",
+          "parameters": [
+            {
+              "name": "username",
+              "type": "STRING"
+            },
+            {
+              "name": "password",
+              "type": "STRING"
+            }
+          ],
+          "returns": [
+            {
+              "name": "is_valid",
+              "type": "SMALLINT"
+            },
+            {
+              "name": "error_msg",
+              "type": "STRING"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "modules": [
+    {
+      "module": "minimal",
+      "file": "./tests/sample_codebase/modules/minimal.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "mixed_files",
+      "file": "./tests/sample_codebase/modules/mixed_files.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "test_mapping",
+      "file": "./tests/sample_codebase/modules/test_mapping.m3",
+      "L4GLS": [
+        "file_complex_types",
+        "file_edge_cases"
+      ],
+      "U4GLS": [
+        "file_special_types"
+      ],
+      "4GLS": [
+        "file_simple_functions",
+        "file_multiple_returns"
+      ]
+    },
+    {
+      "module": "whitespace",
+      "file": "./tests/sample_codebase/modules/whitespace.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "comments",
+      "file": "./tests/sample_codebase/modules/comments.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "empty",
+      "file": "./tests/sample_codebase/modules/empty.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "multiline",
+      "file": "./tests/sample_codebase/modules/multiline.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "test",
+      "file": "./tests/sample_codebase/modules/test.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    },
+    {
+      "module": "single_line",
+      "file": "./tests/sample_codebase/modules/single_line.m3",
+      "L4GLS": [],
+      "U4GLS": [],
+      "4GLS": []
+    }
+  ]
+}
