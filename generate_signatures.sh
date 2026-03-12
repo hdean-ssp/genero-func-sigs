@@ -51,12 +51,6 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
         delete return_order
     }
 
-    {
-        # Track current line for error reporting
-        current_line = NR
-        current_content = $0
-    }
-
     /^FUNCTION / {
         in_function = 1
         function_start_line = NR  # Track start line
@@ -156,15 +150,40 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
         delete param_types
         delete return_order
     }
-
-    END {
-        if (in_function) {
-            print "ERROR: Unclosed function at line " current_line ": " current_content > "/dev/stderr"
-        }
-    }
     ' "$file" >> "$TEMP_FILE" 2>&1; then
         echo "Error: Failed to parse $file" >&2
-        echo "Check the output above for error details (line number and content)" >&2
+        echo "Diagnostic information:" >&2
+        
+        # Check file encoding
+        FILE_ENCODING=$(file -b "$file" | head -1)
+        echo "  - File type: $FILE_ENCODING" >&2
+        
+        # Check for unclosed strings
+        UNCLOSED_STRINGS=$(grep -c '"[^"]*$' "$file" 2>/dev/null || true)
+        if [[ $UNCLOSED_STRINGS -gt 0 ]]; then
+            echo "  - Found $UNCLOSED_STRINGS lines with unclosed strings" >&2
+            grep -n '"[^"]*$' "$file" 2>/dev/null | head -3 >&2
+        fi
+        
+        # Check for unmatched parentheses
+        OPEN_PARENS=$(grep -o '(' "$file" 2>/dev/null | wc -l)
+        CLOSE_PARENS=$(grep -o ')' "$file" 2>/dev/null | wc -l)
+        if [[ $OPEN_PARENS -ne $CLOSE_PARENS ]]; then
+            echo "  - Unmatched parentheses: $OPEN_PARENS open, $CLOSE_PARENS close" >&2
+        fi
+        
+        # Show line count and size
+        LINE_COUNT=$(wc -l < "$file" 2>/dev/null || echo "unknown")
+        FILE_SIZE=$(du -h "$file" 2>/dev/null | cut -f1 || echo "unknown")
+        echo "  - File size: $FILE_SIZE, Lines: $LINE_COUNT" >&2
+        
+        # Try to identify the problematic line by checking for non-ASCII characters
+        NON_ASCII=$(grep --color=never -n '[^[:print:][:space:]]' "$file" 2>/dev/null | head -3 || true)
+        if [[ -n "$NON_ASCII" ]]; then
+            echo "  - Found non-ASCII characters:" >&2
+            echo "$NON_ASCII" >&2
+        fi
+        
         exit 1
     fi
 done
