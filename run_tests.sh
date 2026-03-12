@@ -4,7 +4,7 @@
 set -e
 
 SCRIPT="./generate_signatures.sh"
-TEST_DIR="./tests"
+TEST_DIR="./tests/sample_codebase"
 EXPECTED_OUTPUT="$TEST_DIR/expected_output.json"
 TEMP_OUTPUT=$(mktemp)
 
@@ -50,7 +50,7 @@ cp workspace.json "$SINGLE_FILE_OUTPUT"
 
 # Check that output contains only entries from simple_functions.4gl (excluding metadata)
 FILE_COUNT=$(jq 'del(._metadata) | keys | length' "$SINGLE_FILE_OUTPUT")
-SIMPLE_COUNT=$(jq '."./tests/simple_functions.4gl" | length' "$SINGLE_FILE_OUTPUT")
+SIMPLE_COUNT=$(jq '."./tests/sample_codebase/simple_functions.4gl" | length' "$SINGLE_FILE_OUTPUT")
 
 if [ "$FILE_COUNT" -eq 1 ] && [ "$SIMPLE_COUNT" -eq 3 ]; then
     echo "✓ Test 2 PASSED: Single file processing works correctly (found $SIMPLE_COUNT functions)"

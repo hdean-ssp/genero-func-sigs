@@ -1,5 +1,5 @@
 {
-  "./tests/no_returns.4gl": [
+  "./tests/sample_codebase/no_returns.4gl": [
     {
       "name": "display_message",
       "line": {
@@ -64,7 +64,7 @@
       "returns": []
     }
   ],
-  "./tests/special_types.4gl": [
+  "./tests/sample_codebase/special_types.4gl": [
     {
       "name": "process_interval",
       "line": {
@@ -177,7 +177,7 @@
       ]
     }
   ],
-  "./tests/simple_functions.4gl": [
+  "./tests/sample_codebase/simple_functions.4gl": [
     {
       "name": "add_numbers",
       "line": {
@@ -233,7 +233,7 @@
       "returns": []
     }
   ],
-  "./tests/whitespace_variations.4gl": [
+  "./tests/sample_codebase/whitespace_variations.4gl": [
     {
       "name": "spaced_function",
       "line": {
@@ -302,7 +302,7 @@
       "returns": []
     }
   ],
-  "./tests/edge_cases.4gl": [
+  "./tests/sample_codebase/edge_cases.4gl": [
     {
       "name": "function_with_long_params",
       "line": {
@@ -395,7 +395,7 @@
       ]
     }
   ],
-  "./tests/complex_types.4gl": [
+  "./tests/sample_codebase/complex_types.4gl": [
     {
       "name": "process_record",
       "line": {
@@ -449,7 +449,7 @@
       ]
     }
   ],
-  "./tests/multiple_returns.4gl": [
+  "./tests/sample_codebase/multiple_returns.4gl": [
     {
       "name": "calculate_stats",
       "line": {
