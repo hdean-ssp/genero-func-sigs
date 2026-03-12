@@ -1,23 +1,19 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "generated": "2026-03-12T11:12:27Z",
+    "generated": "2026-03-12T11:42:54.640617Z",
     "source_files": {
-      "workspace": {
-        "version": "1.0.0",
-        "generated": "2026-03-12T11:12:27Z",
-        "files_processed": 7
-      },
+      "workspace": {},
       "modules": {
         "version": "1.0.0",
-        "generated": "2026-03-12T11:12:27Z",
+        "generated": "2026-03-12T11:42:48Z",
         "files_processed": 9
       }
     }
   },
   "files": {
     "file_no_returns": {
-      "path": "./tests/sample_codebase/no_returns.4gl",
+      "path": "tests/sample_codebase/no_returns.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -86,7 +82,7 @@
       ]
     },
     "file_special_types": {
-      "path": "./tests/sample_codebase/special_types.4gl",
+      "path": "tests/sample_codebase/special_types.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -203,7 +199,7 @@
       ]
     },
     "file_simple_functions": {
-      "path": "./tests/sample_codebase/simple_functions.4gl",
+      "path": "tests/sample_codebase/simple_functions.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -263,7 +259,7 @@
       ]
     },
     "file_whitespace_variations": {
-      "path": "./tests/sample_codebase/whitespace_variations.4gl",
+      "path": "tests/sample_codebase/whitespace_variations.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -336,7 +332,7 @@
       ]
     },
     "file_edge_cases": {
-      "path": "./tests/sample_codebase/edge_cases.4gl",
+      "path": "tests/sample_codebase/edge_cases.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -433,7 +429,7 @@
       ]
     },
     "file_complex_types": {
-      "path": "./tests/sample_codebase/lib/complex_types.4gl",
+      "path": "tests/sample_codebase/lib/complex_types.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -491,7 +487,7 @@
       ]
     },
     "file_multiple_returns": {
-      "path": "./tests/sample_codebase/multiple_returns.4gl",
+      "path": "tests/sample_codebase/multiple_returns.4gl",
       "type": "4GLS",
       "functions": [
         {
@@ -556,74 +552,225 @@
   "modules": [
     {
       "module": "minimal",
-      "file": "./tests/sample_codebase/minimal.m3",
+      "file": "tests/sample_codebase/minimal.m3",
       "L4GLS": [],
       "U4GLS": [],
-      "4GLS": []
+      "4GLS": [
+        "minimal.4gl",
+        "main.4gl"
+      ]
     },
     {
       "module": "mixed_files",
-      "file": "./tests/sample_codebase/mixed_files.m3",
-      "L4GLS": [],
-      "U4GLS": [],
-      "4GLS": []
+      "file": "tests/sample_codebase/mixed_files.m3",
+      "L4GLS": [
+        "lib_core.4gl",
+        "lib_base.4gl"
+      ],
+      "U4GLS": [
+        "util_main.4gl"
+      ],
+      "4GLS": [
+        "mixed.4gl",
+        "interface.4gl"
+      ]
     },
     {
       "module": "test_mapping",
-      "file": "./tests/sample_codebase/test_mapping.m3",
+      "file": "tests/sample_codebase/test_mapping.m3",
       "L4GLS": [
-        "file_complex_types",
-        "file_edge_cases"
+        "complex_types.4gl",
+        "edge_cases.4gl"
       ],
       "U4GLS": [
-        "file_special_types"
+        "special_types.4gl"
       ],
       "4GLS": [
-        "file_simple_functions",
-        "file_multiple_returns"
+        "simple_functions.4gl",
+        "multiple_returns.4gl"
       ]
     },
     {
       "module": "whitespace",
-      "file": "./tests/sample_codebase/whitespace.m3",
-      "L4GLS": [],
-      "U4GLS": [],
-      "4GLS": []
+      "file": "tests/sample_codebase/whitespace.m3",
+      "L4GLS": [
+        "lib_a.4gl",
+        "lib_b.4gl",
+        "lib_c.4gl",
+        "lib_d.4gl"
+      ],
+      "U4GLS": [
+        "util_x.4gl",
+        "util_y.4gl"
+      ],
+      "4GLS": [
+        "whitespace.4gl",
+        "helper.4gl"
+      ]
     },
     {
       "module": "multiline",
-      "file": "./tests/sample_codebase/modules/multiline.m3",
-      "L4GLS": [],
-      "U4GLS": [],
-      "4GLS": []
+      "file": "tests/sample_codebase/modules/multiline.m3",
+      "L4GLS": [
+        "lib_auth.4gl",
+        "lib_session.4gl",
+        "lib_crypto.4gl",
+        "lib_validate.4gl",
+        "lib_format.4gl",
+        "lib_parse.4gl",
+        "lib_convert.4gl",
+        "lib_transform.4gl"
+      ],
+      "U4GLS": [
+        "util_log.4gl",
+        "util_debug.4gl",
+        "util_trace.4gl"
+      ],
+      "4GLS": [
+        "multiline.4gl",
+        "processor.4gl",
+        "handler.4gl"
+      ]
     },
     {
       "module": "test",
-      "file": "./tests/sample_codebase/modules/test.m3",
-      "L4GLS": [],
-      "U4GLS": [],
-      "4GLS": []
+      "file": "tests/sample_codebase/modules/test.m3",
+      "L4GLS": [
+        "liberr.4gl",
+        "lib_esc.4gl",
+        "lib_inpt.4gl",
+        "lib_menu.4gl",
+        "lib_scr1.4gl",
+        "fib_dfrm.4gl",
+        "lib_mail.4gl",
+        "lib_ekey.4gl",
+        "lib_list.4gl",
+        "lib_errm.4gl",
+        "libdescr.4gl",
+        "lib_if.4gl",
+        "lib_empl.4gl",
+        "lib_brok.4gl",
+        "fib_fffn.4gl",
+        "ipt.4gl",
+        "lib_bra2.4gl",
+        "lib_addr.4gl",
+        "lib_imkl.4gl",
+        "lib_mad.4gl",
+        "lib_dmad.4gl",
+        "sel_mad.4gl",
+        "lib_grsk.4gl",
+        "lib_rrsk.4gl",
+        "lib_decr.4gl",
+        "lib_rveh.4gl",
+        "lib_rdrv.4gl",
+        "lib_glob.4gl",
+        "lib_lob.4gl",
+        "lib_add3.4gl",
+        "fib_swin.4gl",
+        "lib_cuv.4gl",
+        "lib_frt.4gl",
+        "lib_evt.4gl",
+        "lib_inrp.4gl",
+        "lib_pacc.4gl",
+        "fib_wpr.4gl",
+        "fib_cal.4gl",
+        "lib_unix.4gl",
+        "lib_atrx.4gl",
+        "lib_jobs.4gl",
+        "lib_lock.4gl",
+        "spooler.4gl",
+        "doc_arch.4gl",
+        "lib_run2.4gl",
+        "lib_locn.4gl",
+        "lib_prnt.4gl",
+        "outiface.4gl",
+        "bld_emes.4gl",
+        "lib_darx.4gl",
+        "win_prog.4gl",
+        "fib_inif.4gl",
+        "lib_scom.4gl",
+        "lib_edte.4gl",
+        "lib_keyv.4gl",
+        "lib_rate.4gl",
+        "lib_pcf.4gl",
+        "lib_prtl.4gl",
+        "lib_eml.4gl",
+        "lib_desc.4gl",
+        "lib_evt2.4gl",
+        "ms001.4gl",
+        "ms005.4gl",
+        "htmledit.4gl",
+        "lib_ierr.4gl",
+        "lib_atth.4gl",
+        "lib_xml.4gl",
+        "lib_soap.4gl",
+        "tagmodel.4gl",
+        "lib_inet.4gl",
+        "lib_tun.4gl",
+        "lib_cusx.4gl",
+        "lib_hmac.4gl",
+        "lib_commshub.4gl",
+        "lib_curl.4gl",
+        "lib_jscx.4gl",
+        "lib_cnam.4gl",
+        "lib_curl.4gl",
+        "lib_sndr.4gl",
+        "lib_ppd.4gl",
+        "lib_json.4gl",
+        "lib_oauth.4gl",
+        "lib_empx.4gl",
+        "lib_bdl.4gl",
+        "browse.4gl"
+      ],
+      "U4GLS": [
+        "set_opts.4gl",
+        "eltrace.4gl",
+        "lib_strg.4gl",
+        "setflag.4gl",
+        "lib_jobt.4gl",
+        "lib_schr.4gl"
+      ],
+      "4GLS": [
+        "test.4gl",
+        "jobiface.4gl"
+      ]
     },
     {
       "module": "comments",
-      "file": "./tests/sample_codebase/comments.m3",
-      "L4GLS": [],
-      "U4GLS": [],
-      "4GLS": []
+      "file": "tests/sample_codebase/comments.m3",
+      "L4GLS": [
+        "lib_report.4gl",
+        "lib_export.4gl"
+      ],
+      "U4GLS": [
+        "util_file.4gl"
+      ],
+      "4GLS": [
+        "comments.4gl",
+        "output.4gl"
+      ]
     },
     {
       "module": "empty",
-      "file": "./tests/sample_codebase/empty.m3",
+      "file": "tests/sample_codebase/empty.m3",
       "L4GLS": [],
       "U4GLS": [],
       "4GLS": []
     },
     {
       "module": "single_line",
-      "file": "./tests/sample_codebase/single_line.m3",
-      "L4GLS": [],
-      "U4GLS": [],
-      "4GLS": []
+      "file": "tests/sample_codebase/single_line.m3",
+      "L4GLS": [
+        "lib_util.4gl",
+        "lib_common.4gl",
+        "lib_db.4gl"
+      ],
+      "U4GLS": [
+        "util_str.4gl"
+      ],
+      "4GLS": [
+        "single.4gl"
+      ]
     }
   ]
 }

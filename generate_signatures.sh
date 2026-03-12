@@ -168,52 +168,8 @@ done
 # Generate timestamp in ISO 8601 format
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Group by file and create structured JSON with metadata
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
-from datetime import datetime
-
-VERSION = "1.0.0"
-TIMESTAMP = sys.argv[1] if len(sys.argv) > 1 else datetime.utcnow().isoformat() + "Z"
-TOTAL_FILES = int(sys.argv[2]) if len(sys.argv) > 2 else 0
-TEMP_FILE = sys.argv[3] if len(sys.argv) > 3 else ""
-
-output = {
-    "_metadata": {
-        "version": VERSION,
-        "generated": TIMESTAMP,
-        "files_processed": TOTAL_FILES
-    }
-}
-
-try:
-    with open(TEMP_FILE, 'r') as f:
-        for line in f:
-            line = line.strip()
-            if not line or not line.startswith('{'):
-                continue
-            
-            try:
-                obj = json.loads(line)
-                file_path = obj.get('file')
-                if file_path:
-                    if file_path not in output:
-                        output[file_path] = []
-                    # Remove file field from object
-                    obj.pop('file', None)
-                    output[file_path].append(obj)
-            except json.JSONDecodeError:
-                continue
-    
-    with open("workspace.json", 'w') as f:
-        json.dump(output, f, indent=2)
-    
-except Exception as e:
-    print(f"Error: {e}", file=sys.stderr)
-    sys.exit(1)
-PYTHON_SCRIPT
-"$TIMESTAMP" "$TOTAL_FILES" "$TEMP_FILE"
+# Process signatures using Python script
+python3 scripts/process_signatures.py "$TEMP_FILE" "$OUTPUT_FILE" "$VERSION" "$TIMESTAMP" "$TOTAL_FILES"
 
 if [[ "$VERBOSE" == "1" ]]; then
     echo "Generated $OUTPUT_FILE successfully" >&2

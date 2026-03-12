@@ -16,33 +16,12 @@ echo "Test 1: Running script against test directory..."
 bash "$SCRIPT" "$TEST_DIR"
 cp workspace.json "$TEMP_OUTPUT"
 
-# Sort both files for comparison using Python
+# Sort both files for comparison
 SORTED_EXPECTED=$(mktemp)
 SORTED_ACTUAL=$(mktemp)
 
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
-
-def sort_json(input_file, output_file):
-    with open(input_file, 'r') as f:
-        data = json.load(f)
-    
-    # Remove metadata
-    data.pop('_metadata', None)
-    
-    # Sort all entries
-    sorted_data = {}
-    for key in sorted(data.keys()):
-        sorted_data[key] = sorted(data[key], key=lambda x: x.get('name', ''))
-    
-    with open(output_file, 'w') as f:
-        json.dump(sorted_data, f, sort_keys=True, indent=2)
-
-sort_json(sys.argv[1], sys.argv[2])
-sort_json(sys.argv[3], sys.argv[4])
-PYTHON_SCRIPT
-"$EXPECTED_OUTPUT" "$SORTED_EXPECTED" "$TEMP_OUTPUT" "$SORTED_ACTUAL"
+python3 scripts/test_utils.py sort_signatures "$EXPECTED_OUTPUT" "$SORTED_EXPECTED"
+python3 scripts/test_utils.py sort_signatures "$TEMP_OUTPUT" "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
     echo "✓ Test 1 PASSED: Output matches expected results"
@@ -69,7 +48,7 @@ bash "$SCRIPT" "$TEST_DIR/simple_functions.4gl"
 cp workspace.json "$SINGLE_FILE_OUTPUT"
 
 # Check that output contains only entries from simple_functions.4gl (excluding metadata)
-python3 << 'PYTHON_SCRIPT'
+python3 - "$SINGLE_FILE_OUTPUT" << 'EOF'
 import json
 import sys
 
@@ -86,43 +65,18 @@ if file_count == 1 and simple_count == 3:
 
 print(f"✗ Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got {file_count} files with {simple_count} functions")
 sys.exit(1)
-PYTHON_SCRIPT
-"$SINGLE_FILE_OUTPUT" || {
+EOF
+if [ $? -ne 0 ]; then
     cat "$SINGLE_FILE_OUTPUT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
-}
+fi
 
 # Test 3: Verify signature format
 echo ""
 echo "Test 3: Verifying signature format..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import re
-import sys
-
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-data.pop('_metadata', None)
-
-invalid_sigs = []
-for file_funcs in data.values():
-    for func in file_funcs:
-        sig = func.get('signature', '')
-        if not re.match(r'^\d+-\d+: [a-zA-Z_][a-zA-Z0-9_]*\(', sig):
-            invalid_sigs.append(sig)
-
-if not invalid_sigs:
-    print("✓ Test 3 PASSED: All signatures have valid format")
-    sys.exit(0)
-
-print("✗ Test 3 FAILED: Found invalid signature formats:")
-for sig in invalid_sigs:
-    print(f"  {sig}")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+python3 scripts/test_utils.py check_signatures_format "$TEMP_OUTPUT" && echo "✓ Test 3 PASSED: All signatures have valid format" || {
+    echo "✗ Test 3 FAILED: Found invalid signature formats"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 }
@@ -130,53 +84,22 @@ PYTHON_SCRIPT
 # Test 4: Verify function count
 echo ""
 echo "Test 4: Verifying total function count..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+EXPECTED_FUNCTION_COUNT=$(python3 scripts/test_utils.py count_functions "$EXPECTED_OUTPUT")
+ACTUAL_FUNCTION_COUNT=$(python3 scripts/test_utils.py count_functions "$TEMP_OUTPUT")
 
-with open(sys.argv[1], 'r') as f:
-    expected = json.load(f)
-with open(sys.argv[2], 'r') as f:
-    actual = json.load(f)
-
-expected.pop('_metadata', None)
-actual.pop('_metadata', None)
-
-expected_count = sum(len(funcs) for funcs in expected.values())
-actual_count = sum(len(funcs) for funcs in actual.values())
-
-if expected_count == actual_count:
-    print(f"✓ Test 4 PASSED: Found {actual_count} functions as expected")
-    sys.exit(0)
-
-print(f"✗ Test 4 FAILED: Expected {expected_count} functions, got {actual_count}")
-sys.exit(1)
-PYTHON_SCRIPT
-"$EXPECTED_OUTPUT" "$TEMP_OUTPUT" || {
+if [ "$EXPECTED_FUNCTION_COUNT" -eq "$ACTUAL_FUNCTION_COUNT" ]; then
+    echo "✓ Test 4 PASSED: Found $ACTUAL_FUNCTION_COUNT functions as expected"
+else
+    echo "✗ Test 4 FAILED: Expected $EXPECTED_FUNCTION_COUNT functions, got $ACTUAL_FUNCTION_COUNT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
-}
+fi
 
 # Test 5: Verify metadata structure
 echo ""
 echo "Test 5: Verifying metadata structure..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
-
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-if '_metadata' in data:
-    metadata = data['_metadata']
-    if all(k in metadata for k in ['version', 'generated', 'files_processed']):
-        print(f"✓ Test 5 PASSED: Metadata structure is valid (processed {metadata['files_processed']} files)")
-        sys.exit(0)
-
-print("✗ Test 5 FAILED: Metadata structure is incomplete")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+FILES_PROCESSED=$(python3 scripts/test_utils.py check_metadata "$TEMP_OUTPUT") && echo "✓ Test 5 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)" || {
+    echo "✗ Test 5 FAILED: Metadata structure is incomplete"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 }

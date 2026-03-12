@@ -176,30 +176,8 @@ done
 # Generate timestamp in ISO 8601 format
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Create structured JSON with metadata
-{
-    echo "{"
-    echo "  \"_metadata\": {"
-    echo "    \"version\": \"$VERSION\","
-    echo "    \"generated\": \"$TIMESTAMP\","
-    echo "    \"files_processed\": $TOTAL_FILES"
-    echo "  },"
-    echo "  \"modules\": ["
-    
-    first=1
-    while IFS= read -r line; do
-        if [[ "$first" -eq 1 ]]; then
-            first=0
-        else
-            echo ","
-        fi
-        echo "$line"
-    done < "$TEMP_FILE"
-    
-    echo ""
-    echo "  ]"
-    echo "}"
-} > "$OUTPUT_FILE"
+# Process modules using Python script
+python3 scripts/process_modules.py "$TEMP_FILE" "$OUTPUT_FILE" "$VERSION" "$TIMESTAMP" "$TOTAL_FILES"
 
 if [[ "$VERBOSE" == "1" ]]; then
     echo "Generated $OUTPUT_FILE successfully" >&2

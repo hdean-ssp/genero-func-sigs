@@ -16,32 +16,12 @@ echo "Test 1: Running script against test directory..."
 bash "$SCRIPT" "$TEST_DIR"
 cp modules.json "$TEMP_OUTPUT"
 
-# Sort both files for comparison using Python
+# Sort both files for comparison
 SORTED_EXPECTED=$(mktemp)
 SORTED_ACTUAL=$(mktemp)
 
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
-
-def sort_json(input_file, output_file):
-    with open(input_file, 'r') as f:
-        data = json.load(f)
-    
-    # Remove metadata
-    data.pop('_metadata', None)
-    
-    # Sort modules by module name
-    if 'modules' in data:
-        data['modules'] = sorted(data['modules'], key=lambda x: x.get('module', ''))
-    
-    with open(output_file, 'w') as f:
-        json.dump(data, f, sort_keys=True, indent=2)
-
-sort_json(sys.argv[1], sys.argv[2])
-sort_json(sys.argv[3], sys.argv[4])
-PYTHON_SCRIPT
-"$EXPECTED_OUTPUT" "$SORTED_EXPECTED" "$TEMP_OUTPUT" "$SORTED_ACTUAL"
+python3 scripts/test_utils.py sort_modules "$EXPECTED_OUTPUT" "$SORTED_EXPECTED"
+python3 scripts/test_utils.py sort_modules "$TEMP_OUTPUT" "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
     echo "✓ Test 1 PASSED: Output matches expected results"
@@ -57,23 +37,7 @@ fi
 # Test 2: Verify metadata structure
 echo ""
 echo "Test 2: Verifying metadata structure..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
-
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-if '_metadata' in data:
-    metadata = data['_metadata']
-    if all(k in metadata for k in ['version', 'generated', 'files_processed']):
-        print(f"✓ Test 2 PASSED: Metadata structure is valid (processed {metadata['files_processed']} files)")
-        sys.exit(0)
-
-print("✗ Test 2 FAILED: Metadata structure is incomplete")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+FILES_PROCESSED=$(python3 scripts/test_utils.py check_metadata "$TEMP_OUTPUT") && echo "✓ Test 2 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)" || {
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 }
@@ -81,186 +45,97 @@ PYTHON_SCRIPT
 # Test 3: Verify module count
 echo ""
 echo "Test 3: Verifying module count..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+EXPECTED_MODULE_COUNT=$(python3 scripts/test_utils.py count_modules "$EXPECTED_OUTPUT")
+ACTUAL_MODULE_COUNT=$(python3 scripts/test_utils.py count_modules "$TEMP_OUTPUT")
 
-with open(sys.argv[1], 'r') as f:
-    expected = json.load(f)
-with open(sys.argv[2], 'r') as f:
-    actual = json.load(f)
-
-expected_count = len(expected.get('modules', []))
-actual_count = len(actual.get('modules', []))
-
-if expected_count == actual_count:
-    print(f"✓ Test 3 PASSED: Found {actual_count} modules as expected")
-    sys.exit(0)
-
-print(f"✗ Test 3 FAILED: Expected {expected_count} modules, got {actual_count}")
-sys.exit(1)
-PYTHON_SCRIPT
-"$EXPECTED_OUTPUT" "$TEMP_OUTPUT" || {
+if [ "$EXPECTED_MODULE_COUNT" -eq "$ACTUAL_MODULE_COUNT" ]; then
+    echo "✓ Test 3 PASSED: Found $ACTUAL_MODULE_COUNT modules as expected"
+else
+    echo "✗ Test 3 FAILED: Expected $EXPECTED_MODULE_COUNT modules, got $ACTUAL_MODULE_COUNT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
-}
+fi
 
 # Test 4: Verify empty module handling
 echo ""
 echo "Test 4: Verifying empty module handling..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+EMPTY_MODULE=$(python3 scripts/test_utils.py get_module "$TEMP_OUTPUT" "empty")
+EMPTY_L4GLS=$(echo "$EMPTY_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('L4GLS', [])))")
+EMPTY_U4GLS=$(echo "$EMPTY_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('U4GLS', [])))")
+EMPTY_4GLS=$(echo "$EMPTY_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('4GLS', [])))")
 
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-for module in data.get('modules', []):
-    if module.get('module') == 'empty':
-        l4gls = len(module.get('L4GLS', []))
-        u4gls = len(module.get('U4GLS', []))
-        gls_4 = len(module.get('4GLS', []))
-        
-        if l4gls == 0 and u4gls == 0 and gls_4 == 0:
-            print("✓ Test 4 PASSED: Empty module correctly has zero files")
-            sys.exit(0)
-        else:
-            print(f"✗ Test 4 FAILED: Empty module has unexpected files (L4GLS:{l4gls}, U4GLS:{u4gls}, 4GLS:{gls_4})")
-            sys.exit(1)
-
-print("✗ Test 4 FAILED: Empty module not found")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+if [ "$EMPTY_L4GLS" -eq 0 ] && [ "$EMPTY_U4GLS" -eq 0 ] && [ "$EMPTY_4GLS" -eq 0 ]; then
+    echo "✓ Test 4 PASSED: Empty module correctly has zero files"
+else
+    echo "✗ Test 4 FAILED: Empty module has unexpected files (L4GLS:$EMPTY_L4GLS, U4GLS:$EMPTY_U4GLS, 4GLS:$EMPTY_4GLS)"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
-}
+fi
 
 # Test 5: Verify multiline continuation handling
 echo ""
 echo "Test 5: Verifying multiline continuation handling..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+MULTILINE_MODULE=$(python3 scripts/test_utils.py get_module "$TEMP_OUTPUT" "multiline")
+MULTILINE_L4GLS=$(echo "$MULTILINE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('L4GLS', [])))")
+MULTILINE_U4GLS=$(echo "$MULTILINE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('U4GLS', [])))")
+MULTILINE_4GLS=$(echo "$MULTILINE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('4GLS', [])))")
 
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-for module in data.get('modules', []):
-    if module.get('module') == 'multiline':
-        l4gls = len(module.get('L4GLS', []))
-        u4gls = len(module.get('U4GLS', []))
-        gls_4 = len(module.get('4GLS', []))
-        
-        if l4gls == 8 and u4gls == 3 and gls_4 == 3:
-            print(f"✓ Test 5 PASSED: Multiline module correctly parsed (L4GLS:{l4gls}, U4GLS:{u4gls}, 4GLS:{gls_4})")
-            sys.exit(0)
-        else:
-            print(f"✗ Test 5 FAILED: Multiline module parsing incorrect (L4GLS:{l4gls}, U4GLS:{u4gls}, 4GLS:{gls_4})")
-            sys.exit(1)
-
-print("✗ Test 5 FAILED: Multiline module not found")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+if [ "$MULTILINE_L4GLS" -eq 8 ] && [ "$MULTILINE_U4GLS" -eq 3 ] && [ "$MULTILINE_4GLS" -eq 3 ]; then
+    echo "✓ Test 5 PASSED: Multiline module correctly parsed (L4GLS:$MULTILINE_L4GLS, U4GLS:$MULTILINE_U4GLS, 4GLS:$MULTILINE_4GLS)"
+else
+    echo "✗ Test 5 FAILED: Multiline module parsing incorrect (L4GLS:$MULTILINE_L4GLS, U4GLS:$MULTILINE_U4GLS, 4GLS:$MULTILINE_4GLS)"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
-}
+fi
 
 # Test 6: Verify whitespace handling
 echo ""
 echo "Test 6: Verifying whitespace handling..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+WHITESPACE_MODULE=$(python3 scripts/test_utils.py get_module "$TEMP_OUTPUT" "whitespace")
+WHITESPACE_L4GLS=$(echo "$WHITESPACE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('L4GLS', [])))")
+WHITESPACE_U4GLS=$(echo "$WHITESPACE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('U4GLS', [])))")
 
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-for module in data.get('modules', []):
-    if module.get('module') == 'whitespace':
-        l4gls = len(module.get('L4GLS', []))
-        u4gls = len(module.get('U4GLS', []))
-        
-        if l4gls == 4 and u4gls == 2:
-            print("✓ Test 6 PASSED: Whitespace variations handled correctly")
-            sys.exit(0)
-        else:
-            print(f"✗ Test 6 FAILED: Whitespace handling incorrect (L4GLS:{l4gls}, U4GLS:{u4gls})")
-            sys.exit(1)
-
-print("✗ Test 6 FAILED: Whitespace module not found")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+if [ "$WHITESPACE_L4GLS" -eq 4 ] && [ "$WHITESPACE_U4GLS" -eq 2 ]; then
+    echo "✓ Test 6 PASSED: Whitespace variations handled correctly"
+else
+    echo "✗ Test 6 FAILED: Whitespace handling incorrect (L4GLS:$WHITESPACE_L4GLS, U4GLS:$WHITESPACE_U4GLS)"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
-}
+fi
 
 # Test 7: Verify mixed file types (only .4gl extracted)
 echo ""
 echo "Test 7: Verifying mixed file types (only .4gl files extracted)..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+MIXED_MODULE=$(python3 scripts/test_utils.py get_module "$TEMP_OUTPUT" "mixed_files")
+HAS_C_FILES=$(echo "$MIXED_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); files=m.get('L4GLS',[]) + m.get('U4GLS',[]) + m.get('4GLS',[]); print('true' if any(f.endswith('.c') for f in files) else 'false')")
+HAS_EC_FILES=$(echo "$MIXED_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); files=m.get('L4GLS',[]) + m.get('U4GLS',[]) + m.get('4GLS',[]); print('true' if any(f.endswith('.ec') for f in files) else 'false')")
 
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-for module in data.get('modules', []):
-    if module.get('module') == 'mixed_files':
-        all_files = module.get('L4GLS', []) + module.get('U4GLS', []) + module.get('4GLS', [])
-        has_c = any(f.endswith('.c') for f in all_files)
-        has_ec = any(f.endswith('.ec') for f in all_files)
-        
-        if not has_c and not has_ec:
-            print("✓ Test 7 PASSED: Only .4gl files extracted, .c and .ec files ignored")
-            sys.exit(0)
-        else:
-            print("✗ Test 7 FAILED: Non-.4gl files found in output")
-            sys.exit(1)
-
-print("✗ Test 7 FAILED: Mixed files module not found")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+if [ "$HAS_C_FILES" = "false" ] && [ "$HAS_EC_FILES" = "false" ]; then
+    echo "✓ Test 7 PASSED: Only .4gl files extracted, .c and .ec files ignored"
+else
+    echo "✗ Test 7 FAILED: Non-.4gl files found in output"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
-}
+fi
 
 # Test 8: Verify specific expected files
 echo ""
 echo "Test 8: Verifying specific expected files..."
-python3 << 'PYTHON_SCRIPT'
-import json
-import sys
+TEST_MODULE=$(python3 scripts/test_utils.py get_module "$TEMP_OUTPUT" "test")
+HAS_TEST_4GL=$(echo "$TEST_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print('true' if 'test.4gl' in m.get('4GLS',[]) else 'false')")
+HAS_LIBERR=$(echo "$TEST_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print('true' if 'liberr.4gl' in m.get('L4GLS',[]) else 'false')")
+HAS_SET_OPTS=$(echo "$TEST_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print('true' if 'set_opts.4gl' in m.get('U4GLS',[]) else 'false')")
 
-with open(sys.argv[1], 'r') as f:
-    data = json.load(f)
-
-for module in data.get('modules', []):
-    if module.get('module') == 'test':
-        has_test_4gl = 'test.4gl' in module.get('4GLS', [])
-        has_liberr = 'liberr.4gl' in module.get('L4GLS', [])
-        has_set_opts = 'set_opts.4gl' in module.get('U4GLS', [])
-        
-        if has_test_4gl and has_liberr and has_set_opts:
-            print("✓ Test 8 PASSED: All expected files found in test module")
-            sys.exit(0)
-        else:
-            print("✗ Test 8 FAILED: Missing expected files in test module")
-            print(f"  test.4gl in 4GLS: {has_test_4gl}")
-            print(f"  liberr.4gl in L4GLS: {has_liberr}")
-            print(f"  set_opts.4gl in U4GLS: {has_set_opts}")
-            sys.exit(1)
-
-print("✗ Test 8 FAILED: Test module not found")
-sys.exit(1)
-PYTHON_SCRIPT
-"$TEMP_OUTPUT" || {
+if [ "$HAS_TEST_4GL" = "true" ] && [ "$HAS_LIBERR" = "true" ] && [ "$HAS_SET_OPTS" = "true" ]; then
+    echo "✓ Test 8 PASSED: All expected files found in test module"
+else
+    echo "✗ Test 8 FAILED: Missing expected files in test module"
+    echo "  test.4gl in 4GLS: $HAS_TEST_4GL"
+    echo "  liberr.4gl in L4GLS: $HAS_LIBERR"
+    echo "  set_opts.4gl in U4GLS: $HAS_SET_OPTS"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
-}
+fi
 
 # Cleanup
 rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL"
