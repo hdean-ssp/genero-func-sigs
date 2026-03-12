@@ -24,9 +24,9 @@ python3 scripts/test_utils.py sort_modules "$EXPECTED_OUTPUT" "$SORTED_EXPECTED"
 python3 scripts/test_utils.py sort_modules "$TEMP_OUTPUT" "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
-    echo "✓ Test 1 PASSED: Output matches expected results"
+    echo "[PASS] Test 1 PASSED: Output matches expected results"
 else
-    echo "✗ Test 1 FAILED: Output does not match expected results"
+    echo "[FAIL] Test 1 FAILED: Output does not match expected results"
     echo ""
     echo "Diff:"
     diff "$SORTED_EXPECTED" "$SORTED_ACTUAL" || true
@@ -37,7 +37,7 @@ fi
 # Test 2: Verify metadata structure
 echo ""
 echo "Test 2: Verifying metadata structure..."
-FILES_PROCESSED=$(python3 scripts/test_utils.py check_metadata "$TEMP_OUTPUT") && echo "✓ Test 2 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)" || {
+FILES_PROCESSED=$(python3 scripts/test_utils.py check_metadata "$TEMP_OUTPUT") && echo "[PASS] Test 2 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)" || {
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 }
@@ -49,9 +49,9 @@ EXPECTED_MODULE_COUNT=$(python3 scripts/test_utils.py count_modules "$EXPECTED_O
 ACTUAL_MODULE_COUNT=$(python3 scripts/test_utils.py count_modules "$TEMP_OUTPUT")
 
 if [ "$EXPECTED_MODULE_COUNT" -eq "$ACTUAL_MODULE_COUNT" ]; then
-    echo "✓ Test 3 PASSED: Found $ACTUAL_MODULE_COUNT modules as expected"
+    echo "[PASS] Test 3 PASSED: Found $ACTUAL_MODULE_COUNT modules as expected"
 else
-    echo "✗ Test 3 FAILED: Expected $EXPECTED_MODULE_COUNT modules, got $ACTUAL_MODULE_COUNT"
+    echo "[FAIL] Test 3 FAILED: Expected $EXPECTED_MODULE_COUNT modules, got $ACTUAL_MODULE_COUNT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 fi
@@ -65,9 +65,9 @@ EMPTY_U4GLS=$(echo "$EMPTY_MODULE" | python3 -c "import json, sys; m=json.load(s
 EMPTY_4GLS=$(echo "$EMPTY_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('4GLS', [])))")
 
 if [ "$EMPTY_L4GLS" -eq 0 ] && [ "$EMPTY_U4GLS" -eq 0 ] && [ "$EMPTY_4GLS" -eq 0 ]; then
-    echo "✓ Test 4 PASSED: Empty module correctly has zero files"
+    echo "[PASS] Test 4 PASSED: Empty module correctly has zero files"
 else
-    echo "✗ Test 4 FAILED: Empty module has unexpected files (L4GLS:$EMPTY_L4GLS, U4GLS:$EMPTY_U4GLS, 4GLS:$EMPTY_4GLS)"
+    echo "[FAIL] Test 4 FAILED: Empty module has unexpected files (L4GLS:$EMPTY_L4GLS, U4GLS:$EMPTY_U4GLS, 4GLS:$EMPTY_4GLS)"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 fi
@@ -81,9 +81,9 @@ MULTILINE_U4GLS=$(echo "$MULTILINE_MODULE" | python3 -c "import json, sys; m=jso
 MULTILINE_4GLS=$(echo "$MULTILINE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('4GLS', [])))")
 
 if [ "$MULTILINE_L4GLS" -eq 8 ] && [ "$MULTILINE_U4GLS" -eq 3 ] && [ "$MULTILINE_4GLS" -eq 3 ]; then
-    echo "✓ Test 5 PASSED: Multiline module correctly parsed (L4GLS:$MULTILINE_L4GLS, U4GLS:$MULTILINE_U4GLS, 4GLS:$MULTILINE_4GLS)"
+    echo "[PASS] Test 5 PASSED: Multiline module correctly parsed (L4GLS:$MULTILINE_L4GLS, U4GLS:$MULTILINE_U4GLS, 4GLS:$MULTILINE_4GLS)"
 else
-    echo "✗ Test 5 FAILED: Multiline module parsing incorrect (L4GLS:$MULTILINE_L4GLS, U4GLS:$MULTILINE_U4GLS, 4GLS:$MULTILINE_4GLS)"
+    echo "[FAIL] Test 5 FAILED: Multiline module parsing incorrect (L4GLS:$MULTILINE_L4GLS, U4GLS:$MULTILINE_U4GLS, 4GLS:$MULTILINE_4GLS)"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 fi
@@ -96,9 +96,9 @@ WHITESPACE_L4GLS=$(echo "$WHITESPACE_MODULE" | python3 -c "import json, sys; m=j
 WHITESPACE_U4GLS=$(echo "$WHITESPACE_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print(len(m.get('U4GLS', [])))")
 
 if [ "$WHITESPACE_L4GLS" -eq 4 ] && [ "$WHITESPACE_U4GLS" -eq 2 ]; then
-    echo "✓ Test 6 PASSED: Whitespace variations handled correctly"
+    echo "[PASS] Test 6 PASSED: Whitespace variations handled correctly"
 else
-    echo "✗ Test 6 FAILED: Whitespace handling incorrect (L4GLS:$WHITESPACE_L4GLS, U4GLS:$WHITESPACE_U4GLS)"
+    echo "[FAIL] Test 6 FAILED: Whitespace handling incorrect (L4GLS:$WHITESPACE_L4GLS, U4GLS:$WHITESPACE_U4GLS)"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 fi
@@ -111,9 +111,9 @@ HAS_C_FILES=$(echo "$MIXED_MODULE" | python3 -c "import json, sys; m=json.load(s
 HAS_EC_FILES=$(echo "$MIXED_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); files=m.get('L4GLS',[]) + m.get('U4GLS',[]) + m.get('4GLS',[]); print('true' if any(f.endswith('.ec') for f in files) else 'false')")
 
 if [ "$HAS_C_FILES" = "false" ] && [ "$HAS_EC_FILES" = "false" ]; then
-    echo "✓ Test 7 PASSED: Only .4gl files extracted, .c and .ec files ignored"
+    echo "[PASS] Test 7 PASSED: Only .4gl files extracted, .c and .ec files ignored"
 else
-    echo "✗ Test 7 FAILED: Non-.4gl files found in output"
+    echo "[FAIL] Test 7 FAILED: Non-.4gl files found in output"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" modules.json
     exit 1
 fi
@@ -127,9 +127,9 @@ HAS_LIBERR=$(echo "$TEST_MODULE" | python3 -c "import json, sys; m=json.load(sys
 HAS_SET_OPTS=$(echo "$TEST_MODULE" | python3 -c "import json, sys; m=json.load(sys.stdin); print('true' if 'set_opts.4gl' in m.get('U4GLS',[]) else 'false')")
 
 if [ "$HAS_TEST_4GL" = "true" ] && [ "$HAS_LIBERR" = "true" ] && [ "$HAS_SET_OPTS" = "true" ]; then
-    echo "✓ Test 8 PASSED: All expected files found in test module"
+    echo "[PASS] Test 8 PASSED: All expected files found in test module"
 else
-    echo "✗ Test 8 FAILED: Missing expected files in test module"
+    echo "[FAIL] Test 8 FAILED: Missing expected files in test module"
     echo "  test.4gl in 4GLS: $HAS_TEST_4GL"
     echo "  liberr.4gl in L4GLS: $HAS_LIBERR"
     echo "  set_opts.4gl in U4GLS: $HAS_SET_OPTS"

@@ -24,9 +24,9 @@ python3 scripts/test_utils.py sort_signatures "$EXPECTED_OUTPUT" "$SORTED_EXPECT
 python3 scripts/test_utils.py sort_signatures "$TEMP_OUTPUT" "$SORTED_ACTUAL"
 
 if diff -q "$SORTED_EXPECTED" "$SORTED_ACTUAL" > /dev/null; then
-    echo "✓ Test 1 PASSED: Output matches expected results"
+    echo "[PASS] Test 1 PASSED: Output matches expected results"
 else
-    echo "✗ Test 1 FAILED: Output does not match expected results"
+    echo "[FAIL] Test 1 FAILED: Output does not match expected results"
     echo ""
     echo "Expected:"
     cat "$SORTED_EXPECTED"
@@ -60,10 +60,10 @@ file_count = len(data)
 simple_count = len(data.get('./tests/sample_codebase/simple_functions.4gl', []))
 
 if file_count == 1 and simple_count == 3:
-    print(f"✓ Test 2 PASSED: Single file processing works correctly (found {simple_count} functions)")
+    print(f"[PASS] Test 2 PASSED: Single file processing works correctly (found {simple_count} functions)")
     sys.exit(0)
 
-print(f"✗ Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got {file_count} files with {simple_count} functions")
+print(f"[FAIL] Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got {file_count} files with {simple_count} functions")
 sys.exit(1)
 EOF
 if [ $? -ne 0 ]; then
@@ -75,8 +75,8 @@ fi
 # Test 3: Verify signature format
 echo ""
 echo "Test 3: Verifying signature format..."
-python3 scripts/test_utils.py check_signatures_format "$TEMP_OUTPUT" && echo "✓ Test 3 PASSED: All signatures have valid format" || {
-    echo "✗ Test 3 FAILED: Found invalid signature formats"
+python3 scripts/test_utils.py check_signatures_format "$TEMP_OUTPUT" && echo "[PASS] Test 3 PASSED: All signatures have valid format" || {
+    echo "[FAIL] Test 3 FAILED: Found invalid signature formats"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 }
@@ -88,9 +88,9 @@ EXPECTED_FUNCTION_COUNT=$(python3 scripts/test_utils.py count_functions "$EXPECT
 ACTUAL_FUNCTION_COUNT=$(python3 scripts/test_utils.py count_functions "$TEMP_OUTPUT")
 
 if [ "$EXPECTED_FUNCTION_COUNT" -eq "$ACTUAL_FUNCTION_COUNT" ]; then
-    echo "✓ Test 4 PASSED: Found $ACTUAL_FUNCTION_COUNT functions as expected"
+    echo "[PASS] Test 4 PASSED: Found $ACTUAL_FUNCTION_COUNT functions as expected"
 else
-    echo "✗ Test 4 FAILED: Expected $EXPECTED_FUNCTION_COUNT functions, got $ACTUAL_FUNCTION_COUNT"
+    echo "[FAIL] Test 4 FAILED: Expected $EXPECTED_FUNCTION_COUNT functions, got $ACTUAL_FUNCTION_COUNT"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 fi
@@ -98,8 +98,8 @@ fi
 # Test 5: Verify metadata structure
 echo ""
 echo "Test 5: Verifying metadata structure..."
-FILES_PROCESSED=$(python3 scripts/test_utils.py check_metadata "$TEMP_OUTPUT") && echo "✓ Test 5 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)" || {
-    echo "✗ Test 5 FAILED: Metadata structure is incomplete"
+FILES_PROCESSED=$(python3 scripts/test_utils.py check_metadata "$TEMP_OUTPUT") && echo "[PASS] Test 5 PASSED: Metadata structure is valid (processed $FILES_PROCESSED files)" || {
+    echo "[FAIL] Test 5 FAILED: Metadata structure is incomplete"
     rm "$TEMP_OUTPUT" "$SORTED_EXPECTED" "$SORTED_ACTUAL" "$SINGLE_FILE_OUTPUT" workspace.json
     exit 1
 }

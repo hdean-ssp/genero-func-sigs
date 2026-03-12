@@ -12,7 +12,7 @@ echo ""
 echo "Cleaning up previous test artifacts..."
 rm -f workspace.json modules.json codebase_index.json
 rm -f workspace.db modules.db
-echo "✓ Cleanup complete"
+echo "[PASS] Cleanup complete"
 echo ""
 
 # Test 1: Function Signature Generator
@@ -39,7 +39,7 @@ echo "Generating modules..."
 bash generate_modules.sh tests/sample_codebase > /dev/null
 echo "Generating codebase index..."
 bash generate_codebase_index.sh > /dev/null
-echo "✓ Codebase index generated successfully"
+echo "[PASS] Codebase index generated successfully"
 echo ""
 
 # Test 4: Database Tools
@@ -48,7 +48,7 @@ echo "Test 4: Database Tools"
 echo "=========================================="
 echo "Creating databases..."
 bash query.sh create-dbs > /dev/null
-echo "✓ Databases created successfully"
+echo "[PASS] Databases created successfully"
 echo ""
 
 # Test 5: Query Functions
@@ -59,54 +59,54 @@ echo "=========================================="
 echo "Testing find-function..."
 RESULT=$(bash query.sh find-function "display_message" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data))")
 if [ "$RESULT" -eq 1 ]; then
-    echo "✓ find-function works correctly"
+    echo "[PASS] find-function works correctly"
 else
-    echo "✗ find-function failed"
+    echo "[FAIL] find-function failed"
     exit 1
 fi
 
 echo "Testing search-functions..."
 RESULT=$(bash query.sh search-functions "display" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data))")
 if [ "$RESULT" -ge 1 ]; then
-    echo "✓ search-functions works correctly"
+    echo "[PASS] search-functions works correctly"
 else
-    echo "✗ search-functions failed"
+    echo "[FAIL] search-functions failed"
     exit 1
 fi
 
 echo "Testing list-file-functions..."
 RESULT=$(bash query.sh list-file-functions "tests/sample_codebase/no_returns.4gl" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data))")
 if [ "$RESULT" -ge 1 ]; then
-    echo "✓ list-file-functions works correctly"
+    echo "[PASS] list-file-functions works correctly"
 else
-    echo "✗ list-file-functions failed"
+    echo "[FAIL] list-file-functions failed"
     exit 1
 fi
 
 echo "Testing find-module..."
 RESULT=$(bash query.sh find-module "test" | python3 -c "import json, sys; data=json.load(sys.stdin); print(data.get('name', ''))")
 if [ "$RESULT" = "test" ]; then
-    echo "✓ find-module works correctly"
+    echo "[PASS] find-module works correctly"
 else
-    echo "✗ find-module failed"
+    echo "[FAIL] find-module failed"
     exit 1
 fi
 
 echo "Testing search-modules..."
 RESULT=$(bash query.sh search-modules "test" | wc -l)
 if [ "$RESULT" -ge 1 ]; then
-    echo "✓ search-modules works correctly"
+    echo "[PASS] search-modules works correctly"
 else
-    echo "✗ search-modules failed"
+    echo "[FAIL] search-modules failed"
     exit 1
 fi
 
 echo "Testing list-file-modules..."
 RESULT=$(bash query.sh list-file-modules "test.4gl" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data))")
 if [ "$RESULT" -ge 0 ]; then
-    echo "✓ list-file-modules works correctly"
+    echo "[PASS] list-file-modules works correctly"
 else
-    echo "✗ list-file-modules failed"
+    echo "[FAIL] list-file-modules failed"
     exit 1
 fi
 
@@ -134,14 +134,14 @@ echo ""
 
 # Final Summary
 echo "=========================================="
-echo "✓ ALL TESTS PASSED SUCCESSFULLY!"
+echo "[PASS] ALL TESTS PASSED SUCCESSFULLY!"
 echo "=========================================="
 echo ""
 echo "Summary:"
-echo "  ✓ Function signature generation"
-echo "  ✓ Module dependency generation"
-echo "  ✓ Codebase index generation"
-echo "  ✓ Database creation"
-echo "  ✓ Query functions"
-echo "  ✓ File size verification"
+echo "  [PASS] Function signature generation"
+echo "  [PASS] Module dependency generation"
+echo "  [PASS] Codebase index generation"
+echo "  [PASS] Database creation"
+echo "  [PASS] Query functions"
+echo "  [PASS] File size verification"
 echo ""
