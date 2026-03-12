@@ -1,7 +1,7 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "generated": "2026-03-12T20:50:05Z",
+    "generated": "2026-03-12T21:06:11Z",
     "files_processed": 7
   },
   "./tests/sample_codebase/no_returns.4gl": [
@@ -18,7 +18,13 @@
           "type": "STRING"
         }
       ],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "log_message",
+          "line": 7
+        }
+      ]
     },
     {
       "name": "update_database",
@@ -37,7 +43,17 @@
           "type": "STRING"
         }
       ],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "validate_id",
+          "line": 16
+        },
+        {
+          "name": "write_to_log",
+          "line": 17
+        }
+      ]
     },
     {
       "name": "log_error",
@@ -56,7 +72,17 @@
           "type": "VARCHAR(100)"
         }
       ],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "write_to_log",
+          "line": 24
+        },
+        {
+          "name": "send_alert",
+          "line": 25
+        }
+      ]
     },
     {
       "name": "initialize_system",
@@ -66,7 +92,17 @@
       },
       "signature": "28-32: initialize_system()",
       "parameters": [],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "setup_environment",
+          "line": 30
+        },
+        {
+          "name": "load_configuration",
+          "line": 31
+        }
+      ]
     },
     {
       "name": "process_request",
@@ -85,7 +121,21 @@
           "type": "STRING"
         }
       ],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "validate_request",
+          "line": 38
+        },
+        {
+          "name": "log_message",
+          "line": 39
+        },
+        {
+          "name": "update_database",
+          "line": 40
+        }
+      ]
     }
   ],
   "./tests/sample_codebase/special_types.4gl": [
@@ -106,6 +156,12 @@
         {
           "name": "result",
           "type": "INTEGER"
+        }
+      ],
+      "calls": [
+        {
+          "name": "log_interval",
+          "line": 8
         }
       ]
     },
@@ -130,6 +186,12 @@
         {
           "name": "row_count",
           "type": "INTEGER"
+        }
+      ],
+      "calls": [
+        {
+          "name": "process_blob",
+          "line": 19
         }
       ]
     },
@@ -159,6 +221,16 @@
           "name": "tax",
           "type": "DECIMAL(5,2)"
         }
+      ],
+      "calls": [
+        {
+          "name": "validate_amount",
+          "line": 31
+        },
+        {
+          "name": "calculate_tax",
+          "line": 32
+        }
       ]
     },
     {
@@ -177,6 +249,12 @@
         {
           "name": "success",
           "type": "BOOLEAN"
+        }
+      ],
+      "calls": [
+        {
+          "name": "log_serial",
+          "line": 42
         }
       ]
     },
@@ -197,6 +275,16 @@
         {
           "name": "count",
           "type": "INTEGER"
+        }
+      ],
+      "calls": [
+        {
+          "name": "validate_array",
+          "line": 54
+        },
+        {
+          "name": "process_records",
+          "line": 55
         }
       ]
     },
@@ -221,6 +309,12 @@
         {
           "name": "result",
           "type": "BOOLEAN"
+        }
+      ],
+      "calls": [
+        {
+          "name": "log_boolean",
+          "line": 65
         }
       ]
     }
@@ -248,6 +342,12 @@
           "name": "result",
           "type": "INTEGER"
         }
+      ],
+      "calls": [
+        {
+          "name": "validate_number",
+          "line": 10
+        }
       ]
     },
     {
@@ -268,6 +368,12 @@
           "name": "name",
           "type": "STRING"
         }
+      ],
+      "calls": [
+        {
+          "name": "format_string",
+          "line": 21
+        }
       ]
     },
     {
@@ -278,7 +384,13 @@
       },
       "signature": "25-29: no_params_no_return()",
       "parameters": [],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "log_message",
+          "line": 28
+        }
+      ]
     },
     {
       "name": "display_message",
@@ -293,7 +405,13 @@
           "type": "STRING"
         }
       ],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "log_message",
+          "line": 35
+        }
+      ]
     }
   ],
   "./tests/sample_codebase/whitespace_variations.4gl": [
@@ -318,6 +436,12 @@
         {
           "name": "result",
           "type": "CHAR(5)"
+        }
+      ],
+      "calls": [
+        {
+          "name": "validate_params",
+          "line": 9
         }
       ]
     },
@@ -347,6 +471,12 @@
           "name": "sum",
           "type": "INTEGER"
         }
+      ],
+      "calls": [
+        {
+          "name": "log_sum",
+          "line": 19
+        }
       ]
     },
     {
@@ -362,7 +492,13 @@
           "type": "DECIMAL"
         }
       ],
-      "returns": []
+      "returns": [],
+      "calls": [
+        {
+          "name": "process_value",
+          "line": 28
+        }
+      ]
     },
     {
       "name": "mixed_whitespace",
@@ -385,6 +521,16 @@
         {
           "name": "z",
           "type": "INTEGER"
+        }
+      ],
+      "calls": [
+        {
+          "name": "log_calculation",
+          "line": 38
+        },
+        {
+          "name": "adjust_value",
+          "line": 39
         }
       ]
     }
@@ -424,6 +570,16 @@
           "name": "result",
           "type": "INTEGER"
         }
+      ],
+      "calls": [
+        {
+          "name": "validate_long_params",
+          "line": 12
+        },
+        {
+          "name": "process_money",
+          "line": 13
+        }
       ]
     },
     {
@@ -438,6 +594,12 @@
         {
           "name": "status",
           "type": "INTEGER"
+        }
+      ],
+      "calls": [
+        {
+          "name": "log_status",
+          "line": 20
         }
       ]
     },
@@ -459,6 +621,12 @@
           "name": "result",
           "type": "STRING"
         }
+      ],
+      "calls": [
+        {
+          "name": "validate_string",
+          "line": 31
+        }
       ]
     },
     {
@@ -478,6 +646,16 @@
         {
           "name": "Output_Value",
           "type": "SMALLINT"
+        }
+      ],
+      "calls": [
+        {
+          "name": "Process_Input",
+          "line": 40
+        },
+        {
+          "name": "Get_Status",
+          "line": 41
         }
       ]
     },
@@ -503,6 +681,24 @@
           "name": "result2",
           "type": "STRING"
         }
+      ],
+      "calls": [
+        {
+          "name": "initialize_context",
+          "line": 51
+        },
+        {
+          "name": "get_count",
+          "line": 52
+        },
+        {
+          "name": "format_output",
+          "line": 53
+        },
+        {
+          "name": "finalize_context",
+          "line": 54
+        }
       ]
     },
     {
@@ -522,6 +718,48 @@
         {
           "name": "status",
           "type": "INTEGER"
+        }
+      ],
+      "calls": [
+        {
+          "name": "validate_input",
+          "line": 64
+        },
+        {
+          "name": "process_valid",
+          "line": 65
+        },
+        {
+          "name": "process_invalid",
+          "line": 68
+        },
+        {
+          "name": "get_type",
+          "line": 73
+        },
+        {
+          "name": "handle_type1",
+          "line": 75
+        },
+        {
+          "name": "handle_type2",
+          "line": 77
+        },
+        {
+          "name": "handle_default",
+          "line": 79
+        },
+        {
+          "name": "check_condition",
+          "line": 83
+        },
+        {
+          "name": "process_loop",
+          "line": 84
+        },
+        {
+          "name": "decrement_value",
+          "line": 85
         }
       ]
     },
@@ -546,6 +784,24 @@
         {
           "name": "result",
           "type": "STRING"
+        }
+      ],
+      "calls": [
+        {
+          "name": "outer_function",
+          "line": 97
+        },
+        {
+          "name": "compare_values",
+          "line": 100
+        },
+        {
+          "name": "transform_data",
+          "line": 100
+        },
+        {
+          "name": "process_match",
+          "line": 101
         }
       ]
     }
@@ -572,6 +828,16 @@
         {
           "name": "success",
           "type": "SMALLINT"
+        }
+      ],
+      "calls": [
+        {
+          "name": "validate_record",
+          "line": 13
+        },
+        {
+          "name": "check_status",
+          "line": 14
         }
       ]
     },
@@ -601,6 +867,16 @@
           "name": "is_valid",
           "type": "SMALLINT"
         }
+      ],
+      "calls": [
+        {
+          "name": "validate_dates",
+          "line": 27
+        },
+        {
+          "name": "calculate_days",
+          "line": 28
+        }
       ]
     },
     {
@@ -620,6 +896,12 @@
         {
           "name": "output_rec",
           "type": "RECORD"
+        }
+      ],
+      "calls": [
+        {
+          "name": "preprocess_record",
+          "line": 43
         }
       ]
     }
@@ -651,6 +933,12 @@
           "name": "count",
           "type": "INTEGER"
         }
+      ],
+      "calls": [
+        {
+          "name": "validate_number",
+          "line": 15
+        }
       ]
     },
     {
@@ -679,6 +967,16 @@
           "name": "error_msg",
           "type": "STRING"
         }
+      ],
+      "calls": [
+        {
+          "name": "check_username",
+          "line": 30
+        },
+        {
+          "name": "format_error",
+          "line": 31
+        }
       ]
     },
     {
@@ -706,6 +1004,16 @@
         {
           "name": "result_data",
           "type": "STRING"
+        }
+      ],
+      "calls": [
+        {
+          "name": "validate_input",
+          "line": 43
+        },
+        {
+          "name": "transform_data",
+          "line": 46
         }
       ]
     }

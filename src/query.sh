@@ -18,23 +18,27 @@ usage() {
 Usage: query.sh <command> [args...]
 
 Signature queries (workspace.db):
-  find-function <name>           Find function by exact name
-  search-functions <pattern>     Search functions by name pattern
-  list-file-functions <path>     List all functions in a file
+  find-function <name>                Find function by exact name
+  search-functions <pattern>          Search functions by name pattern
+  list-file-functions <path>          List all functions in a file
+  find-function-dependencies <name>   Find all functions called by a function
+  find-function-dependents <name>     Find all functions that call a function
 
 Module queries (modules.db):
-  find-module <name>             Find module by exact name
-  search-modules <pattern>        Search modules by name pattern
-  list-file-modules <filename>   Find modules using a file
+  find-module <name>                  Find module by exact name
+  search-modules <pattern>            Search modules by name pattern
+  list-file-modules <filename>        Find modules using a file
 
 Database management:
-  create-dbs                     Create both databases from JSON files
-  create-signatures-db           Create workspace.db from workspace.json
-  create-modules-db              Create modules.db from modules.json
+  create-dbs                          Create both databases from JSON files
+  create-signatures-db                Create workspace.db from workspace.json
+  create-modules-db                   Create modules.db from modules.json
 
 Examples:
   query.sh find-function my_function
   query.sh search-functions "get_*"
+  query.sh find-function-dependencies my_function
+  query.sh find-function-dependents my_function
   query.sh find-module core
   query.sh list-file-modules "util.4gl"
 EOF
@@ -67,6 +71,12 @@ case "$command" in
         ;;
     list-file-functions)
         python3 "$PROJECT_ROOT/scripts/query_db.py" list_file_functions "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    find-function-dependencies)
+        python3 "$PROJECT_ROOT/scripts/query_db.py" find_function_dependencies "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    find-function-dependents)
+        python3 "$PROJECT_ROOT/scripts/query_db.py" find_function_dependents "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
         ;;
     find-module)
         python3 "$PROJECT_ROOT/scripts/query_db.py" find_module "$PROJECT_ROOT/$MODULES_DB" "$@"

@@ -61,6 +61,8 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
         delete param_order
         delete param_types
         delete return_order
+        delete function_calls
+        call_count = 0
     }
 
     /^FUNCTION / {
@@ -130,6 +132,51 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
         next
     }
 
+    # Pattern 1: Direct CALL statements
+    in_function && /^[ \t]*CALL[ \t]+[a-zA-Z_][a-zA-Z0-9_]*[ \t]*\(/ {
+        line_content = $0
+        sub(/^[ \t]*CALL[ \t]+/, "", line_content)
+        match(line_content, /^[a-zA-Z_][a-zA-Z0-9_]*/)
+        called_func = substr(line_content, RSTART, RLENGTH)
+        
+        call_count++
+        function_calls[call_count] = called_func "|" NR
+        next
+    }
+
+    # Pattern 2: LET var = function_name(params)
+    in_function && /^[ \t]*LET[ \t]+[a-zA-Z_][a-zA-Z0-9_]*[ \t]*=[ \t]*[a-zA-Z_][a-zA-Z0-9_]*[ \t]*\(/ {
+        line_content = $0
+        sub(/.*=[ \t]*/, "", line_content)
+        match(line_content, /^[a-zA-Z_][a-zA-Z0-9_]*/)
+        called_func = substr(line_content, RSTART, RLENGTH)
+        
+        call_count++
+        function_calls[call_count] = called_func "|" NR
+        next
+    }
+
+    # Pattern 3: Function calls in control flow conditions (IF, WHILE, CASE, WHEN)
+    in_function && /^[ \t]*(IF|ELSEIF|WHILE|CASE|WHEN).*[a-zA-Z_][a-zA-Z0-9_]*[ \t]*\(/ {
+        line_content = $0
+        sub(/^[ \t]*(IF|ELSEIF|WHILE|CASE|WHEN)[ \t]+/, "", line_content)
+        
+        # Extract all function calls from this line
+        while (match(line_content, /[a-zA-Z_][a-zA-Z0-9_]*[ \t]*\(/)) {
+            called_func = substr(line_content, RSTART, RLENGTH)
+            sub(/[ \t]*\(.*/, "", called_func)
+            
+            # Avoid duplicates and false positives
+            if (called_func != current_function && called_func != "IF" && called_func != "ELSEIF" && called_func != "WHILE" && called_func != "CASE" && called_func != "WHEN") {
+                call_count++
+                function_calls[call_count] = called_func "|" NR
+            }
+            
+            line_content = substr(line_content, RSTART + RLENGTH)
+        }
+        next
+    }
+
     /END FUNCTION/ {
         if (!in_function) {
             next  # Skip END FUNCTION without matching FUNCTION
@@ -159,21 +206,34 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
             returns_str = returns_str (i > 1 ? ", " : "") var " " (type ? type : "unknown")
         }
 
+        # Build calls array
+        calls_json = ""
+        for (i = 1; i <= call_count; i++) {
+            split(function_calls[i], call_parts, "|")
+            called_name = call_parts[1]
+            call_line = call_parts[2]
+            
+            calls_json = calls_json (i > 1 ? ", " : "")
+            calls_json = calls_json sprintf("{\"name\":\"%s\",\"line\":%d}", called_name, call_line)
+        }
+
         # Create signature string with line numbers
         function_sig = function_start_line "-" function_end_line ": " current_function "(" params_str ")"
         if (returns_str != "" && return_count > 0) {
             function_sig = function_sig ":" returns_str
         }
 
-        # Print structured JSON
-        printf "{\"file\":\"%s\",\"name\":\"%s\",\"line\":{\"start\":%d,\"end\":%d},\"signature\":\"%s\",\"parameters\":[%s],\"returns\":[%s]}\n",
-               file, current_function, function_start_line, function_end_line, function_sig, params_json, returns_json
+        # Print structured JSON with calls
+        printf "{\"file\":\"%s\",\"name\":\"%s\",\"line\":{\"start\":%d,\"end\":%d},\"signature\":\"%s\",\"parameters\":[%s],\"returns\":[%s],\"calls\":[%s]}\n",
+               file, current_function, function_start_line, function_end_line, function_sig, params_json, returns_json, calls_json
 
         in_function = 0
         delete vars
         delete param_order
         delete param_types
         delete return_order
+        delete function_calls
+        call_count = 0
     }
     ' "$file" >> "$TEMP_FILE" 2>/dev/null || true
 done
