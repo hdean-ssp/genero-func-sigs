@@ -18,8 +18,10 @@ The result is a single index that enables:
 ## Requirements
 
 - Bash shell
-- `jq` - Command-line JSON processor
+- Python 3.6+ (for JSON processing)
 - Both `workspace.json` and `modules.json` must exist
+
+No external dependencies like `jq` needed - everything uses built-in Python.
 
 ## Usage
 
@@ -143,7 +145,20 @@ Enables building tools for:
 
 ## Example Queries
 
-Using `jq` to query the index:
+Using the SQLite database tools (recommended for large files):
+
+```bash
+# Find all functions in a specific module
+bash query.sh search-functions "*" | jq 'map(select(.path | contains("module_name")))'
+
+# Find which modules use a specific file
+bash query.sh list-file-modules "util.4gl"
+
+# Count functions per file
+bash query.sh search-functions "*" | jq 'group_by(.path) | map({path: .[0].path, count: length})'
+```
+
+For advanced queries, you can also use `jq` directly on the JSON files (though SQLite is recommended for large files):
 
 ```bash
 # Find all functions in a specific module

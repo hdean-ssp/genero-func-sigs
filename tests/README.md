@@ -69,15 +69,15 @@ To add a new test codebase:
    ```bash
    # For function signatures
    bash generate_signatures.sh ./tests/my_codebase
-   jq 'del(._metadata)' workspace.json > tests/my_codebase/expected_output.json
+   python3 -c "import json; data=json.load(open('workspace.json')); data.pop('_metadata'); json.dump(data, open('tests/my_codebase/expected_output.json', 'w'), indent=2)"
    
    # For module dependencies
    bash generate_modules.sh ./tests/my_codebase
-   jq 'del(._metadata)' modules.json > tests/my_codebase/expected_modules.json
+   python3 -c "import json; data=json.load(open('modules.json')); data.pop('_metadata'); json.dump(data, open('tests/my_codebase/expected_modules.json', 'w'), indent=2)"
    
    # For unified index
    bash generate_codebase_index.sh
-   jq 'del(._metadata)' codebase_index.json > tests/my_codebase/expected_index.json
+   python3 -c "import json; data=json.load(open('codebase_index.json')); data.pop('_metadata'); json.dump(data, open('tests/my_codebase/expected_index.json', 'w'), indent=2)"
    ```
 5. Update test scripts to include the new codebase
 

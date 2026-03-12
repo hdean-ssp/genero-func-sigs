@@ -12,8 +12,10 @@ This script extracts the three types of 4GL file dependencies from .m3 makefiles
 ## Requirements
 
 - Bash shell
-- `jq` - Command-line JSON processor (for formatting output)
+- Python 3.6+ (for JSON processing)
 - Standard Unix utilities: `find`, `awk`, `date`
+
+No external dependencies like `jq` needed - everything uses built-in Python.
 
 ## Usage
 
