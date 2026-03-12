@@ -62,12 +62,13 @@ echo ""
 # Step 1: Generate function signatures
 if [[ $GL4_COUNT -gt 0 ]]; then
     log_step "Generating function signatures from .4gl files..."
-    if bash generate_signatures.sh "$TARGET"; then
-        log_success "Function signatures generated (workspace.json)"
-    else
+    if ! bash generate_signatures.sh "$TARGET" 2>&1 | tee /tmp/gen_sig_output.log; then
         log_error "Failed to generate function signatures"
+        log_error "Last output:"
+        tail -20 /tmp/gen_sig_output.log >&2
         exit 1
     fi
+    log_success "Function signatures generated (workspace.json)"
 else
     log_info "Skipping function signature generation (no .4gl files found)"
 fi

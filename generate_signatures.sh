@@ -38,7 +38,9 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
     if [[ "$VERBOSE" == "1" ]]; then
         echo "Processing: $file" >&2
     fi
-    sed 's/[^[:print:]\t]//g' "$file" | awk -v file="$file" '
+    
+    # Process file and capture any errors
+    if ! sed 's/[^[:print:]\t]//g' "$file" | awk -v file="$file" '
 
 
     BEGIN {
@@ -148,7 +150,10 @@ find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
         delete param_types
         delete return_order
     }
-    ' "$file" >> "$TEMP_FILE"
+    ' "$file" >> "$TEMP_FILE" 2>&1; then
+        echo "Error: Failed to parse $file" >&2
+        exit 1
+    fi
 done
 
 # Generate timestamp in ISO 8601 format

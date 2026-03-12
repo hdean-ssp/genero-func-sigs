@@ -37,7 +37,7 @@ fi
 # Generate timestamp in ISO 8601 format
 TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
-# Build the unified index with jq
+# Generate the unified index using jq
 jq -n \
   --arg version "$VERSION" \
   --arg timestamp "$TIMESTAMP" \
@@ -107,7 +107,11 @@ jq -n \
     "files": ($files | map({(.id): {path: .path, type: .type, functions: .functions}}) | add),
     "modules": $modules_indexed
   }
-  ' | jq '.' > "$OUTPUT_FILE"
+  ' 2>&1 | jq '.' > "$OUTPUT_FILE" || {
+    echo "Error: Failed to generate codebase index" >&2
+    echo "Check that workspace.json and modules.json are valid JSON" >&2
+    exit 1
+  }
 
 if [[ "$VERBOSE" == "1" ]]; then
     echo "Generated $OUTPUT_FILE successfully" >&2
