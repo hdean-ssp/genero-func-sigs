@@ -1,12 +1,17 @@
 {
+  "_metadata": {
+    "version": "1.0.0",
+    "generated": "2026-03-12T20:40:15Z",
+    "files_processed": 7
+  },
   "./tests/sample_codebase/no_returns.4gl": [
     {
       "name": "display_message",
       "line": {
         "start": 3,
-        "end": 7
+        "end": 8
       },
-      "signature": "3-7: display_message(msg STRING)",
+      "signature": "3-8: display_message(msg STRING)",
       "parameters": [
         {
           "name": "msg",
@@ -18,10 +23,10 @@
     {
       "name": "update_database",
       "line": {
-        "start": 9,
-        "end": 15
+        "start": 10,
+        "end": 18
       },
-      "signature": "9-15: update_database(id INTEGER, value STRING)",
+      "signature": "10-18: update_database(id INTEGER, value STRING)",
       "parameters": [
         {
           "name": "id",
@@ -37,10 +42,10 @@
     {
       "name": "log_error",
       "line": {
-        "start": 17,
-        "end": 22
+        "start": 20,
+        "end": 26
       },
-      "signature": "17-22: log_error(error_code INTEGER, error_text VARCHAR(100))",
+      "signature": "20-26: log_error(error_code INTEGER, error_text VARCHAR(100))",
       "parameters": [
         {
           "name": "error_code",
@@ -56,11 +61,30 @@
     {
       "name": "initialize_system",
       "line": {
-        "start": 24,
-        "end": 26
+        "start": 28,
+        "end": 32
       },
-      "signature": "24-26: initialize_system()",
+      "signature": "28-32: initialize_system()",
       "parameters": [],
+      "returns": []
+    },
+    {
+      "name": "process_request",
+      "line": {
+        "start": 34,
+        "end": 41
+      },
+      "signature": "34-41: process_request(request_id INTEGER, request_data STRING)",
+      "parameters": [
+        {
+          "name": "request_id",
+          "type": "INTEGER"
+        },
+        {
+          "name": "request_data",
+          "type": "STRING"
+        }
+      ],
       "returns": []
     }
   ],
@@ -69,9 +93,9 @@
       "name": "process_interval",
       "line": {
         "start": 3,
-        "end": 9
+        "end": 10
       },
-      "signature": "3-9: process_interval(time_span INTERVAL DAY TO HOUR):result INTEGER",
+      "signature": "3-10: process_interval(time_span INTERVAL DAY TO HOUR):result INTEGER",
       "parameters": [
         {
           "name": "time_span",
@@ -88,10 +112,10 @@
     {
       "name": "handle_text_blob",
       "line": {
-        "start": 11,
-        "end": 19
+        "start": 12,
+        "end": 21
       },
-      "signature": "11-19: handle_text_blob(content TEXT):status SMALLINT, row_count INTEGER",
+      "signature": "12-21: handle_text_blob(content TEXT):status SMALLINT, row_count INTEGER",
       "parameters": [
         {
           "name": "content",
@@ -112,10 +136,10 @@
     {
       "name": "calculate_money",
       "line": {
-        "start": 21,
-        "end": 30
+        "start": 23,
+        "end": 34
       },
-      "signature": "21-30: calculate_money(amount1 MONEY(10,2), amount2 MONEY(10,2)):total MONEY(10,2), tax DECIMAL(5,2)",
+      "signature": "23-34: calculate_money(amount1 MONEY(10,2), amount2 MONEY(10,2)):total MONEY(10,2), tax DECIMAL(5,2)",
       "parameters": [
         {
           "name": "amount1",
@@ -140,10 +164,10 @@
     {
       "name": "get_serial_value",
       "line": {
-        "start": 32,
-        "end": 39
+        "start": 36,
+        "end": 44
       },
-      "signature": "32-39: get_serial_value():new_id SERIAL, success BOOLEAN",
+      "signature": "36-44: get_serial_value():new_id SERIAL, success BOOLEAN",
       "parameters": [],
       "returns": [
         {
@@ -159,10 +183,10 @@
     {
       "name": "process_dynamic_array",
       "line": {
-        "start": 41,
-        "end": 50
+        "start": 46,
+        "end": 57
       },
-      "signature": "41-50: process_dynamic_array(data DYNAMIC ARRAY OF RECORD):count INTEGER",
+      "signature": "46-57: process_dynamic_array(data DYNAMIC ARRAY OF RECORD):count INTEGER",
       "parameters": [
         {
           "name": "data",
@@ -175,6 +199,30 @@
           "type": "INTEGER"
         }
       ]
+    },
+    {
+      "name": "handle_boolean_logic",
+      "line": {
+        "start": 59,
+        "end": 67
+      },
+      "signature": "59-67: handle_boolean_logic(flag1 BOOLEAN, flag2 BOOLEAN):result BOOLEAN",
+      "parameters": [
+        {
+          "name": "flag1",
+          "type": "BOOLEAN"
+        },
+        {
+          "name": "flag2",
+          "type": "BOOLEAN"
+        }
+      ],
+      "returns": [
+        {
+          "name": "result",
+          "type": "BOOLEAN"
+        }
+      ]
     }
   ],
   "./tests/sample_codebase/simple_functions.4gl": [
@@ -182,9 +230,9 @@
       "name": "add_numbers",
       "line": {
         "start": 3,
-        "end": 10
+        "end": 12
       },
-      "signature": "3-10: add_numbers(a INTEGER, b INTEGER):result INTEGER",
+      "signature": "3-12: add_numbers(a INTEGER, b INTEGER):result INTEGER",
       "parameters": [
         {
           "name": "a",
@@ -205,10 +253,10 @@
     {
       "name": "get_user_name",
       "line": {
-        "start": 12,
-        "end": 19
+        "start": 14,
+        "end": 23
       },
-      "signature": "12-19: get_user_name(user_id INTEGER):name STRING",
+      "signature": "14-23: get_user_name(user_id INTEGER):name STRING",
       "parameters": [
         {
           "name": "user_id",
@@ -225,11 +273,26 @@
     {
       "name": "no_params_no_return",
       "line": {
-        "start": 21,
-        "end": 23
+        "start": 25,
+        "end": 29
       },
-      "signature": "21-23: no_params_no_return()",
+      "signature": "25-29: no_params_no_return()",
       "parameters": [],
+      "returns": []
+    },
+    {
+      "name": "display_message",
+      "line": {
+        "start": 31,
+        "end": 36
+      },
+      "signature": "31-36: display_message(msg STRING)",
+      "parameters": [
+        {
+          "name": "msg",
+          "type": "STRING"
+        }
+      ],
       "returns": []
     }
   ],
@@ -238,9 +301,9 @@
       "name": "spaced_function",
       "line": {
         "start": 3,
-        "end": 10
+        "end": 11
       },
-      "signature": "3-10: spaced_function(param1 INTEGER, param2 STRING):result CHAR(5)",
+      "signature": "3-11: spaced_function(param1 INTEGER, param2 STRING):result CHAR(5)",
       "parameters": [
         {
           "name": "param1",
@@ -261,10 +324,10 @@
     {
       "name": "compact_function",
       "line": {
-        "start": 12,
-        "end": 19
+        "start": 13,
+        "end": 21
       },
-      "signature": "12-19: compact_function(a INTEGER, b INTEGER, c INTEGER):sum INTEGER",
+      "signature": "13-21: compact_function(a INTEGER, b INTEGER, c INTEGER):sum INTEGER",
       "parameters": [
         {
           "name": "a",
@@ -289,10 +352,10 @@
     {
       "name": "tabbed_function",
       "line": {
-        "start": 21,
-        "end": 27
+        "start": 23,
+        "end": 30
       },
-      "signature": "21-27: tabbed_function(value DECIMAL)",
+      "signature": "23-30: tabbed_function(value DECIMAL)",
       "parameters": [
         {
           "name": "value",
@@ -300,6 +363,30 @@
         }
       ],
       "returns": []
+    },
+    {
+      "name": "mixed_whitespace",
+      "line": {
+        "start": 32,
+        "end": 41
+      },
+      "signature": "32-41: mixed_whitespace(x INTEGER, y INTEGER):z INTEGER",
+      "parameters": [
+        {
+          "name": "x",
+          "type": "INTEGER"
+        },
+        {
+          "name": "y",
+          "type": "INTEGER"
+        }
+      ],
+      "returns": [
+        {
+          "name": "z",
+          "type": "INTEGER"
+        }
+      ]
     }
   ],
   "./tests/sample_codebase/edge_cases.4gl": [
@@ -307,9 +394,9 @@
       "name": "function_with_long_params",
       "line": {
         "start": 3,
-        "end": 13
+        "end": 15
       },
-      "signature": "3-13: function_with_long_params(param1 VARCHAR(255), param2 DECIMAL(10,2), param3 DATETIME YEAR TO SECOND, param4 MONEY(16,2), param5 BYTE):result INTEGER",
+      "signature": "3-15: function_with_long_params(param1 VARCHAR(255), param2 DECIMAL(10,2), param3 DATETIME YEAR TO SECOND, param4 MONEY(16,2), param5 BYTE):result INTEGER",
       "parameters": [
         {
           "name": "param1",
@@ -342,10 +429,10 @@
     {
       "name": "inline_return",
       "line": {
-        "start": 15,
-        "end": 19
+        "start": 17,
+        "end": 22
       },
-      "signature": "15-19: inline_return():status INTEGER",
+      "signature": "17-22: inline_return():status INTEGER",
       "parameters": [],
       "returns": [
         {
@@ -357,10 +444,10 @@
     {
       "name": "function_with_comments",
       "line": {
-        "start": 21,
-        "end": 28
+        "start": 24,
+        "end": 33
       },
-      "signature": "21-28: function_with_comments(value INTEGER):result STRING",
+      "signature": "24-33: function_with_comments(value INTEGER):result STRING",
       "parameters": [
         {
           "name": "value",
@@ -377,10 +464,10 @@
     {
       "name": "mixed_case_FUNCTION",
       "line": {
-        "start": 30,
-        "end": 36
+        "start": 35,
+        "end": 43
       },
-      "signature": "30-36: mixed_case_FUNCTION(MixedParam CHAR(10)):Output_Value SMALLINT",
+      "signature": "35-43: mixed_case_FUNCTION(MixedParam CHAR(10)):Output_Value SMALLINT",
       "parameters": [
         {
           "name": "MixedParam",
@@ -393,6 +480,30 @@
           "type": "SMALLINT"
         }
       ]
+    },
+    {
+      "name": "complex_call_patterns",
+      "line": {
+        "start": 45,
+        "end": 57
+      },
+      "signature": "45-57: complex_call_patterns(input_val STRING):result1 INTEGER, result2 STRING",
+      "parameters": [
+        {
+          "name": "input_val",
+          "type": "STRING"
+        }
+      ],
+      "returns": [
+        {
+          "name": "result1",
+          "type": "INTEGER"
+        },
+        {
+          "name": "result2",
+          "type": "STRING"
+        }
+      ]
     }
   ],
   "./tests/sample_codebase/lib/complex_types.4gl": [
@@ -400,9 +511,9 @@
       "name": "process_record",
       "line": {
         "start": 3,
-        "end": 14
+        "end": 16
       },
-      "signature": "3-14: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
+      "signature": "3-16: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
       "parameters": [
         {
           "name": "rec",
@@ -423,10 +534,10 @@
     {
       "name": "get_date_range",
       "line": {
-        "start": 16,
-        "end": 26
+        "start": 18,
+        "end": 31
       },
-      "signature": "16-26: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
+      "signature": "18-31: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
       "parameters": [
         {
           "name": "start_date",
@@ -447,6 +558,26 @@
           "type": "SMALLINT"
         }
       ]
+    },
+    {
+      "name": "transform_data",
+      "line": {
+        "start": 33,
+        "end": 48
+      },
+      "signature": "33-48: transform_data(input_rec RECORD):output_rec RECORD",
+      "parameters": [
+        {
+          "name": "input_rec",
+          "type": "RECORD"
+        }
+      ],
+      "returns": [
+        {
+          "name": "output_rec",
+          "type": "RECORD"
+        }
+      ]
     }
   ],
   "./tests/sample_codebase/multiple_returns.4gl": [
@@ -454,9 +585,9 @@
       "name": "calculate_stats",
       "line": {
         "start": 3,
-        "end": 15
+        "end": 18
       },
-      "signature": "3-15: calculate_stats(values ARRAY OF DECIMAL):total DECIMAL, average DECIMAL, count INTEGER",
+      "signature": "3-18: calculate_stats(values ARRAY OF DECIMAL):total DECIMAL, average DECIMAL, count INTEGER",
       "parameters": [
         {
           "name": "values",
@@ -481,10 +612,10 @@
     {
       "name": "validate_user",
       "line": {
-        "start": 17,
-        "end": 27
+        "start": 20,
+        "end": 34
       },
-      "signature": "17-27: validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING",
+      "signature": "20-34: validate_user(username STRING, password STRING):is_valid SMALLINT, error_msg STRING",
       "parameters": [
         {
           "name": "username",
@@ -502,6 +633,34 @@
         },
         {
           "name": "error_msg",
+          "type": "STRING"
+        }
+      ]
+    },
+    {
+      "name": "process_data",
+      "line": {
+        "start": 36,
+        "end": 49
+      },
+      "signature": "36-49: process_data(input_data STRING):result_code INTEGER, result_message STRING, result_data STRING",
+      "parameters": [
+        {
+          "name": "input_data",
+          "type": "STRING"
+        }
+      ],
+      "returns": [
+        {
+          "name": "result_code",
+          "type": "INTEGER"
+        },
+        {
+          "name": "result_message",
+          "type": "STRING"
+        },
+        {
+          "name": "result_data",
           "type": "STRING"
         }
       ]

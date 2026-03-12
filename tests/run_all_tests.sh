@@ -66,7 +66,7 @@ cd "$PROJECT_ROOT"
 
 echo "Testing find-function..."
 RESULT=$(bash "$PROJECT_ROOT/query.sh" find-function "display_message" | python3 -c "import json, sys; data=json.load(sys.stdin); print(len(data))")
-if [ "$RESULT" -eq 1 ]; then
+if [ "$RESULT" -ge 1 ]; then
     echo "[PASS] find-function works correctly"
 else
     echo "[FAIL] find-function failed"

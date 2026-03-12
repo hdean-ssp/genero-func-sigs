@@ -64,11 +64,11 @@ data.pop('_metadata', None)
 file_count = len(data)
 simple_count = len(data.get('./tests/sample_codebase/simple_functions.4gl', []))
 
-if file_count == 1 and simple_count == 3:
+if file_count == 1 and simple_count == 4:
     print(f"[PASS] Test 2 PASSED: Single file processing works correctly (found {simple_count} functions)")
     sys.exit(0)
 
-print(f"[FAIL] Test 2 FAILED: Expected 1 file with 3 functions from simple_functions.4gl, got {file_count} files with {simple_count} functions")
+print(f"[FAIL] Test 2 FAILED: Expected 1 file with 4 functions from simple_functions.4gl, got {file_count} files with {simple_count} functions")
 sys.exit(1)
 EOF
 if [ $? -ne 0 ]; then
