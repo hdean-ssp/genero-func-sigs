@@ -1,12 +1,12 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "generated": "2026-03-13T10:31:05Z",
+    "generated": "2026-03-13T10:48:21Z",
     "source_files": {
       "workspace": {},
       "modules": {
         "version": "1.0.0",
-        "generated": "2026-03-13T10:31:05Z",
+        "generated": "2026-03-13T10:48:21Z",
         "files_processed": 9
       }
     }
@@ -35,9 +35,7 @@
               "name": "log_message",
               "line": 7
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "update_database",
@@ -66,9 +64,7 @@
               "name": "write_to_log",
               "line": 17
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "log_error",
@@ -97,9 +93,7 @@
               "name": "send_alert",
               "line": 25
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "initialize_system",
@@ -119,9 +113,7 @@
               "name": "load_configuration",
               "line": 31
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "process_request",
@@ -154,9 +146,7 @@
               "name": "update_database",
               "line": 40
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         }
       ]
     },
@@ -188,9 +178,7 @@
               "name": "log_interval",
               "line": 8
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "handle_text_blob",
@@ -220,9 +208,7 @@
               "name": "process_blob",
               "line": 19
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "calculate_money",
@@ -260,9 +246,7 @@
               "name": "calculate_tax",
               "line": 32
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "get_serial_value",
@@ -287,9 +271,7 @@
               "name": "log_serial",
               "line": 42
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "process_dynamic_array",
@@ -319,9 +301,7 @@
               "name": "process_records",
               "line": 55
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "handle_boolean_logic",
@@ -351,9 +331,7 @@
               "name": "log_boolean",
               "line": 65
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         }
       ]
     },
@@ -389,100 +367,6 @@
               "name": "validate_number",
               "line": 52
             }
-          ],
-          "file_references": [
-            {
-              "reference": "EH100466-4",
-              "author": "Rich",
-              "date": "2024-03-20",
-              "description": "Initial"
-            },
-            {
-              "reference": "EH100539-4",
-              "author": "Greg",
-              "date": "2024-05-30",
-              "description": "Ad-hoc SMS Messaging"
-            },
-            {
-              "reference": "EH100512-2",
-              "author": "Chilly",
-              "date": "2024-08-19",
-              "description": "Email integration"
-            },
-            {
-              "reference": "PRB-299",
-              "author": "MartinB",
-              "date": "2024-08-28",
-              "description": "Enhanced MailMerge Error Handling"
-            },
-            {
-              "reference": "EH100512-9",
-              "author": "Chilly",
-              "date": "2024-08-29",
-              "description": "Job scheduler send file attachments"
-            },
-            {
-              "reference": "PRB-337",
-              "author": "MartinB",
-              "date": "2024-09-05",
-              "description": "Removed changes for PRB-299"
-            },
-            {
-              "reference": "EH100512-15",
-              "author": "Chris P",
-              "date": "2024-09-06",
-              "description": "Don't run SMS/Email if not active"
-            },
-            {
-              "reference": "EH100512-9a",
-              "author": "Chilly",
-              "date": "2024-09-19",
-              "description": "Use job_task_params for commshub for passing file attachments"
-            },
-            {
-              "reference": "EH100512",
-              "author": "Chris P",
-              "date": "2024-10-16",
-              "description": "No background form required"
-            },
-            {
-              "reference": "SR-40356-3",
-              "author": "Rich",
-              "date": "2025-04-01",
-              "description": "Error email service"
-            }
-          ],
-          "file_authors": [
-            {
-              "author": "Rich",
-              "first_change": "2024-03-20",
-              "last_change": "2025-04-01",
-              "count": 2
-            },
-            {
-              "author": "Greg",
-              "first_change": "2024-05-30",
-              "last_change": "2024-05-30",
-              "count": 1
-            },
-            {
-              "author": "Chilly",
-              "first_change": "2024-08-19",
-              "last_change": "2024-09-19",
-              "count": 3
-            },
-            {
-              "author": "MartinB",
-              "first_change": "2024-08-28",
-              "last_change": "2024-09-05",
-              "count": 2
-            },
-            {
-              "author": "Chris P",
-              "first_change": "2024-09-06",
-              "last_change": "2024-10-16",
-              "count": 2
-            }
           ]
         },
         {
@@ -509,100 +393,6 @@
               "name": "format_string",
               "line": 63
             }
-          ],
-          "file_references": [
-            {
-              "reference": "EH100466-4",
-              "author": "Rich",
-              "date": "2024-03-20",
-              "description": "Initial"
-            },
-            {
-              "reference": "EH100539-4",
-              "author": "Greg",
-              "date": "2024-05-30",
-              "description": "Ad-hoc SMS Messaging"
-            },
-            {
-              "reference": "EH100512-2",
-              "author": "Chilly",
-              "date": "2024-08-19",
-              "description": "Email integration"
-            },
-            {
-              "reference": "PRB-299",
-              "author": "MartinB",
-              "date": "2024-08-28",
-              "description": "Enhanced MailMerge Error Handling"
-            },
-            {
-              "reference": "EH100512-9",
-              "author": "Chilly",
-              "date": "2024-08-29",
-              "description": "Job scheduler send file attachments"
-            },
-            {
-              "reference": "PRB-337",
-              "author": "MartinB",
-              "date": "2024-09-05",
-              "description": "Removed changes for PRB-299"
-            },
-            {
-              "reference": "EH100512-15",
-              "author": "Chris P",
-              "date": "2024-09-06",
-              "description": "Don't run SMS/Email if not active"
-            },
-            {
-              "reference": "EH100512-9a",
-              "author": "Chilly",
-              "date": "2024-09-19",
-              "description": "Use job_task_params for commshub for passing file attachments"
-            },
-            {
-              "reference": "EH100512",
-              "author": "Chris P",
-              "date": "2024-10-16",
-              "description": "No background form required"
-            },
-            {
-              "reference": "SR-40356-3",
-              "author": "Rich",
-              "date": "2025-04-01",
-              "description": "Error email service"
-            }
-          ],
-          "file_authors": [
-            {
-              "author": "Rich",
-              "first_change": "2024-03-20",
-              "last_change": "2025-04-01",
-              "count": 2
-            },
-            {
-              "author": "Greg",
-              "first_change": "2024-05-30",
-              "last_change": "2024-05-30",
-              "count": 1
-            },
-            {
-              "author": "Chilly",
-              "first_change": "2024-08-19",
-              "last_change": "2024-09-19",
-              "count": 3
-            },
-            {
-              "author": "MartinB",
-              "first_change": "2024-08-28",
-              "last_change": "2024-09-05",
-              "count": 2
-            },
-            {
-              "author": "Chris P",
-              "first_change": "2024-09-06",
-              "last_change": "2024-10-16",
-              "count": 2
-            }
           ]
         },
         {
@@ -618,100 +408,6 @@
             {
               "name": "log_message",
               "line": 70
-            }
-          ],
-          "file_references": [
-            {
-              "reference": "EH100466-4",
-              "author": "Rich",
-              "date": "2024-03-20",
-              "description": "Initial"
-            },
-            {
-              "reference": "EH100539-4",
-              "author": "Greg",
-              "date": "2024-05-30",
-              "description": "Ad-hoc SMS Messaging"
-            },
-            {
-              "reference": "EH100512-2",
-              "author": "Chilly",
-              "date": "2024-08-19",
-              "description": "Email integration"
-            },
-            {
-              "reference": "PRB-299",
-              "author": "MartinB",
-              "date": "2024-08-28",
-              "description": "Enhanced MailMerge Error Handling"
-            },
-            {
-              "reference": "EH100512-9",
-              "author": "Chilly",
-              "date": "2024-08-29",
-              "description": "Job scheduler send file attachments"
-            },
-            {
-              "reference": "PRB-337",
-              "author": "MartinB",
-              "date": "2024-09-05",
-              "description": "Removed changes for PRB-299"
-            },
-            {
-              "reference": "EH100512-15",
-              "author": "Chris P",
-              "date": "2024-09-06",
-              "description": "Don't run SMS/Email if not active"
-            },
-            {
-              "reference": "EH100512-9a",
-              "author": "Chilly",
-              "date": "2024-09-19",
-              "description": "Use job_task_params for commshub for passing file attachments"
-            },
-            {
-              "reference": "EH100512",
-              "author": "Chris P",
-              "date": "2024-10-16",
-              "description": "No background form required"
-            },
-            {
-              "reference": "SR-40356-3",
-              "author": "Rich",
-              "date": "2025-04-01",
-              "description": "Error email service"
-            }
-          ],
-          "file_authors": [
-            {
-              "author": "Rich",
-              "first_change": "2024-03-20",
-              "last_change": "2025-04-01",
-              "count": 2
-            },
-            {
-              "author": "Greg",
-              "first_change": "2024-05-30",
-              "last_change": "2024-05-30",
-              "count": 1
-            },
-            {
-              "author": "Chilly",
-              "first_change": "2024-08-19",
-              "last_change": "2024-09-19",
-              "count": 3
-            },
-            {
-              "author": "MartinB",
-              "first_change": "2024-08-28",
-              "last_change": "2024-09-05",
-              "count": 2
-            },
-            {
-              "author": "Chris P",
-              "first_change": "2024-09-06",
-              "last_change": "2024-10-16",
-              "count": 2
             }
           ]
         },
@@ -733,100 +429,6 @@
             {
               "name": "log_message",
               "line": 77
-            }
-          ],
-          "file_references": [
-            {
-              "reference": "EH100466-4",
-              "author": "Rich",
-              "date": "2024-03-20",
-              "description": "Initial"
-            },
-            {
-              "reference": "EH100539-4",
-              "author": "Greg",
-              "date": "2024-05-30",
-              "description": "Ad-hoc SMS Messaging"
-            },
-            {
-              "reference": "EH100512-2",
-              "author": "Chilly",
-              "date": "2024-08-19",
-              "description": "Email integration"
-            },
-            {
-              "reference": "PRB-299",
-              "author": "MartinB",
-              "date": "2024-08-28",
-              "description": "Enhanced MailMerge Error Handling"
-            },
-            {
-              "reference": "EH100512-9",
-              "author": "Chilly",
-              "date": "2024-08-29",
-              "description": "Job scheduler send file attachments"
-            },
-            {
-              "reference": "PRB-337",
-              "author": "MartinB",
-              "date": "2024-09-05",
-              "description": "Removed changes for PRB-299"
-            },
-            {
-              "reference": "EH100512-15",
-              "author": "Chris P",
-              "date": "2024-09-06",
-              "description": "Don't run SMS/Email if not active"
-            },
-            {
-              "reference": "EH100512-9a",
-              "author": "Chilly",
-              "date": "2024-09-19",
-              "description": "Use job_task_params for commshub for passing file attachments"
-            },
-            {
-              "reference": "EH100512",
-              "author": "Chris P",
-              "date": "2024-10-16",
-              "description": "No background form required"
-            },
-            {
-              "reference": "SR-40356-3",
-              "author": "Rich",
-              "date": "2025-04-01",
-              "description": "Error email service"
-            }
-          ],
-          "file_authors": [
-            {
-              "author": "Rich",
-              "first_change": "2024-03-20",
-              "last_change": "2025-04-01",
-              "count": 2
-            },
-            {
-              "author": "Greg",
-              "first_change": "2024-05-30",
-              "last_change": "2024-05-30",
-              "count": 1
-            },
-            {
-              "author": "Chilly",
-              "first_change": "2024-08-19",
-              "last_change": "2024-09-19",
-              "count": 3
-            },
-            {
-              "author": "MartinB",
-              "first_change": "2024-08-28",
-              "last_change": "2024-09-05",
-              "count": 2
-            },
-            {
-              "author": "Chris P",
-              "first_change": "2024-09-06",
-              "last_change": "2024-10-16",
-              "count": 2
             }
           ]
         }
@@ -864,9 +466,7 @@
               "name": "validate_params",
               "line": 9
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "compact_function",
@@ -900,9 +500,7 @@
               "name": "log_sum",
               "line": 19
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "tabbed_function",
@@ -923,9 +521,7 @@
               "name": "process_value",
               "line": 28
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "mixed_whitespace",
@@ -959,9 +555,7 @@
               "name": "adjust_value",
               "line": 39
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         }
       ]
     },
@@ -1013,9 +607,7 @@
               "name": "process_money",
               "line": 13
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "inline_return",
@@ -1036,9 +628,7 @@
               "name": "log_status",
               "line": 20
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "function_with_comments",
@@ -1064,9 +654,7 @@
               "name": "validate_string",
               "line": 31
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "mixed_case_FUNCTION",
@@ -1096,9 +684,7 @@
               "name": "Get_Status",
               "line": 41
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "complex_call_patterns",
@@ -1140,9 +726,7 @@
               "name": "finalize_context",
               "line": 54
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "control_flow_calls",
@@ -1204,9 +788,7 @@
               "name": "decrement_value",
               "line": 85
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "nested_function_calls",
@@ -1248,9 +830,7 @@
               "name": "process_match",
               "line": 101
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         }
       ]
     },
@@ -1290,9 +870,7 @@
               "name": "check_status",
               "line": 14
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "get_date_range",
@@ -1330,9 +908,7 @@
               "name": "calculate_days",
               "line": 28
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "transform_data",
@@ -1358,9 +934,7 @@
               "name": "preprocess_record",
               "line": 43
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         }
       ]
     },
@@ -1400,9 +974,7 @@
               "name": "validate_number",
               "line": 15
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "validate_user",
@@ -1440,9 +1012,7 @@
               "name": "format_error",
               "line": 31
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         },
         {
           "name": "process_data",
@@ -1480,9 +1050,7 @@
               "name": "transform_data",
               "line": 46
             }
-          ],
-          "file_references": [],
-          "file_authors": []
+          ]
         }
       ]
     }
