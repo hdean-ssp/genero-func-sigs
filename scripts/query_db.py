@@ -284,6 +284,129 @@ def find_functions_calling_in_module(modules_db, signatures_db, module_name, cal
     conn_sig.close()
     return results
 
+def find_functions_using_table(db_file, table_name):
+    """Find all functions that use a specific database table via LIKE references."""
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        c.execute('''SELECT DISTINCT f.name, f.file_id, fi.path
+                     FROM functions f
+                     JOIN files fi ON f.file_id = fi.id
+                     JOIN parameters p ON f.id = p.function_id
+                     WHERE p.table_name = ?
+                     ORDER BY f.name''', (table_name,))
+        
+        results = []
+        for row in c.fetchall():
+            results.append({
+                'name': row['name'],
+                'file': row['path'],
+                'table': table_name
+            })
+        
+        conn.close()
+        return results
+    except Exception as e:
+        conn.close()
+        raise e
+
+
+def find_tables_used_by_function(db_file, func_name):
+    """Find all database tables used by a function via LIKE references."""
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        c.execute('''SELECT DISTINCT p.table_name
+                     FROM functions f
+                     JOIN parameters p ON f.id = p.function_id
+                     WHERE f.name = ? AND p.table_name IS NOT NULL
+                     ORDER BY p.table_name''', (func_name,))
+        
+        results = []
+        for row in c.fetchall():
+            results.append(row['table_name'])
+        
+        conn.close()
+        return results
+    except Exception as e:
+        conn.close()
+        raise e
+
+
+def find_unresolved_like_references(db_file):
+    """Find all unresolved LIKE references in the codebase."""
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        c.execute('''SELECT f.name, f.file_id, fi.path, p.name as param_name, p.type
+                     FROM functions f
+                     JOIN files fi ON f.file_id = fi.id
+                     JOIN parameters p ON f.id = p.function_id
+                     WHERE p.is_like_reference = 1 AND p.resolved = 0
+                     ORDER BY f.name, p.name''')
+        
+        results = []
+        for row in c.fetchall():
+            results.append({
+                'function': row['name'],
+                'file': row['path'],
+                'parameter': row['param_name'],
+                'type': row['type']
+            })
+        
+        conn.close()
+        return results
+    except Exception as e:
+        conn.close()
+        return []
+
+
+def get_resolved_type_info(db_file, func_name, param_name):
+    """Get resolved type information for a function parameter."""
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    try:
+        c.execute('''SELECT p.type, p.table_name, p.columns, p.types, p.resolved
+                     FROM functions f
+                     JOIN parameters p ON f.id = p.function_id
+                     WHERE f.name = ? AND p.name = ?''', (func_name, param_name))
+        
+        row = c.fetchone()
+        if not row:
+            conn.close()
+            return None
+        
+        result = {
+            'type': row['type'],
+            'resolved': bool(row['resolved']),
+            'table': row['table_name']
+        }
+        
+        if row['columns']:
+            result['columns'] = row['columns'].split(',')
+        if row['types']:
+            try:
+                # Try to parse as JSON first
+                result['types'] = json.loads(row['types'])
+            except (json.JSONDecodeError, TypeError):
+                # Fall back to comma split
+                result['types'] = row['types'].split(',')
+        
+        conn.close()
+        return result
+    except Exception as e:
+        conn.close()
+        raise e
+
+
 def find_module_dependencies(modules_db, signatures_db, module_name):
     """Find all modules that a module depends on (via function calls)."""
     # Get all functions in the module
@@ -342,6 +465,12 @@ def main():
         print("  find_module_for_function <name>     - Find which module(s) contain a function", file=sys.stderr)
         print("  find_functions_calling_in_module <module> <func> - Find functions in module that call a function", file=sys.stderr)
         print("  find_module_dependencies <module>   - Find modules that a module depends on", file=sys.stderr)
+        print("", file=sys.stderr)
+        print("Type-aware queries (Phase 1d):", file=sys.stderr)
+        print("  find_functions_using_table <table>  - Find functions using a database table", file=sys.stderr)
+        print("  find_tables_used_by_function <name> - Find database tables used by a function", file=sys.stderr)
+        print("  find_unresolved_like_references     - Find all unresolved LIKE references", file=sys.stderr)
+        print("  get_resolved_type_info <func> <param> - Get resolved type info for a parameter", file=sys.stderr)
         sys.exit(1)
     
     command = sys.argv[1]
@@ -453,6 +582,27 @@ def main():
             elif command == "find_function_dependents" and len(sys.argv) > 3:
                 results = find_function_dependents(db_file, sys.argv[3])
                 print(json.dumps(results, indent=2))
+            
+            # Type-aware queries (Phase 1d)
+            elif command == "find_functions_using_table" and len(sys.argv) > 3:
+                results = find_functions_using_table(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_tables_used_by_function" and len(sys.argv) > 3:
+                results = find_tables_used_by_function(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_unresolved_like_references":
+                results = find_unresolved_like_references(db_file)
+                print(json.dumps(results, indent=2))
+            
+            elif command == "get_resolved_type_info" and len(sys.argv) > 4:
+                result = get_resolved_type_info(db_file, sys.argv[3], sys.argv[4])
+                if result:
+                    print(json.dumps(result, indent=2))
+                else:
+                    print(f"Parameter '{sys.argv[4]}' not found in function '{sys.argv[3]}'", file=sys.stderr)
+                    sys.exit(1)
             
             else:
                 print(f"Error: Unknown command or missing arguments", file=sys.stderr)
