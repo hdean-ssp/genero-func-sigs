@@ -15,7 +15,7 @@ echo ""
 
 # Clean up any previous test artifacts
 echo "Cleaning up previous test artifacts..."
-rm -f workspace.json modules.json codebase_index.json
+rm -f workspace.json modules.json
 rm -f workspace.db modules.db
 echo "[PASS] Cleanup complete"
 echo ""
@@ -49,9 +49,7 @@ echo "Generating signatures..."
 bash "$PROJECT_ROOT/src/generate_signatures.sh" "$SCRIPT_DIR/sample_codebase" > /dev/null
 echo "Generating modules..."
 bash "$PROJECT_ROOT/src/generate_modules.sh" "$SCRIPT_DIR/sample_codebase" > /dev/null
-echo "Generating codebase index..."
-bash "$PROJECT_ROOT/src/generate_codebase_index.sh" > /dev/null
-echo "[PASS] Codebase index generated successfully"
+echo "[PASS] Module dependencies generated successfully"
 echo ""
 
 # Test 5: Database Tools
@@ -132,14 +130,14 @@ echo "=========================================="
 echo "Test 7: File Sizes"
 echo "=========================================="
 echo "JSON files:"
-ls -lh workspace.json modules.json codebase_index.json | awk '{print "  " $9 ": " $5}'
+ls -lh workspace.json modules.json | awk '{print "  " $9 ": " $5}'
 echo ""
 echo "SQLite databases:"
 ls -lh workspace.db modules.db | awk '{print "  " $9 ": " $5}'
 echo ""
 
 # Calculate compression ratio
-JSON_SIZE=$(du -c workspace.json modules.json codebase_index.json | tail -1 | awk '{print $1}')
+JSON_SIZE=$(du -c workspace.json modules.json | tail -1 | awk '{print $1}')
 DB_SIZE=$(du -c workspace.db modules.db | tail -1 | awk '{print $1}')
 if [ "$JSON_SIZE" -gt 0 ]; then
     RATIO=$((DB_SIZE * 100 / JSON_SIZE))

@@ -121,21 +121,6 @@ fi
 
 echo ""
 
-# Step 3: Generate unified codebase index
-if [[ $GL4_COUNT -gt 0 && $M3_COUNT -gt 0 ]]; then
-    log_step "Generating unified codebase index..."
-    if bash "$SCRIPT_DIR/src/generate_codebase_index.sh"; then
-        log_success "Codebase index generated (codebase_index.json)"
-    else
-        log_error "Failed to generate codebase index"
-        exit 1
-    fi
-else
-    log_info "Skipping codebase index generation (requires both .4gl and .m3 files)"
-fi
-
-echo ""
-
 # Step 4: Create SQLite databases for fast querying
 log_step "Creating SQLite databases for fast querying..."
 
@@ -180,7 +165,6 @@ log_info "Generated files:"
 [[ $GL4_COUNT -gt 0 ]] && log_info "  - workspace.db (SQLite database with signatures and headers)"
 [[ $M3_COUNT -gt 0 ]] && log_info "  - modules.json (module dependencies)"
 [[ $M3_COUNT -gt 0 ]] && log_info "  - modules.db (SQLite database for fast queries)"
-[[ $GL4_COUNT -gt 0 && $M3_COUNT -gt 0 ]] && log_info "  - codebase_index.json (unified index)"
 echo ""
 log_info "Summary:"
 log_info "  - $GL4_COUNT .4gl files processed"

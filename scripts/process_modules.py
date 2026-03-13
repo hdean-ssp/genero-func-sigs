@@ -6,7 +6,10 @@ import sys
 import os
 
 def normalize_path(path):
-    """Normalize path to be relative with ./ prefix."""
+    """Normalize path to be relative with ./ prefix, resolving .. components."""
+    # First, resolve any .. or . components
+    path = os.path.normpath(path)
+    
     # Convert absolute paths to relative if possible
     if os.path.isabs(path):
         try:

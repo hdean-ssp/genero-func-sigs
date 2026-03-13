@@ -171,6 +171,161 @@ def find_function_dependents(db_file, func_name):
     conn.close()
     return results
 
+def find_functions_in_module(modules_db, signatures_db, module_name):
+    """Find all functions in a specific module."""
+    # Get files in module from modules.db
+    conn_mod = sqlite3.connect(modules_db)
+    conn_mod.row_factory = sqlite3.Row
+    c_mod = conn_mod.cursor()
+    
+    c_mod.execute('SELECT id FROM modules WHERE name = ?', (module_name,))
+    module_row = c_mod.fetchone()
+    
+    if not module_row:
+        conn_mod.close()
+        return None
+    
+    # Get all files in this module
+    c_mod.execute('''SELECT file_name FROM module_files WHERE module_id = ?''', (module_row['id'],))
+    files = [row['file_name'] for row in c_mod.fetchall()]
+    conn_mod.close()
+    
+    if not files:
+        return []
+    
+    # Query functions from those files in workspace.db
+    conn_sig = sqlite3.connect(signatures_db)
+    conn_sig.row_factory = sqlite3.Row
+    c_sig = conn_sig.cursor()
+    
+    results = []
+    for file_name in files:
+        # Match by filename ending (e.g., "main.4gl" matches "./path/to/main.4gl")
+        c_sig.execute('''SELECT f.name, f.signature, f.line_start, f.line_end, fi.path
+                         FROM functions f
+                         JOIN files fi ON f.file_id = fi.id
+                         WHERE fi.path LIKE ? OR fi.path LIKE ?
+                         ORDER BY f.line_start''', (f'%/{file_name}', f'%\\{file_name}'))
+        results.extend([dict(row) for row in c_sig.fetchall()])
+    
+    conn_sig.close()
+    return results
+
+def find_module_for_function(modules_db, signatures_db, func_name):
+    """Find which module(s) contain a specific function."""
+    # First find the function in workspace.db
+    conn_sig = sqlite3.connect(signatures_db)
+    conn_sig.row_factory = sqlite3.Row
+    c_sig = conn_sig.cursor()
+    
+    c_sig.execute('SELECT id FROM functions WHERE name = ?', (func_name,))
+    func_row = c_sig.fetchone()
+    
+    if not func_row:
+        conn_sig.close()
+        return None
+    
+    # Get the file path
+    c_sig.execute('''SELECT fi.path FROM functions f
+                     JOIN files fi ON f.file_id = fi.id
+                     WHERE f.id = ?''', (func_row['id'],))
+    file_row = c_sig.fetchone()
+    conn_sig.close()
+    
+    if not file_row:
+        return []
+    
+    file_path = file_row['path']
+    file_name = file_path.split('/')[-1]
+    
+    # Find modules using this file
+    conn_mod = sqlite3.connect(modules_db)
+    conn_mod.row_factory = sqlite3.Row
+    c_mod = conn_mod.cursor()
+    
+    c_mod.execute('''SELECT DISTINCT m.name, mf.category FROM modules m
+                     JOIN module_files mf ON m.id = mf.module_id
+                     WHERE mf.file_name LIKE ?
+                     ORDER BY m.name''', (f'%{file_name}%',))
+    
+    results = [dict(row) for row in c_mod.fetchall()]
+    conn_mod.close()
+    return results
+
+def find_functions_calling_in_module(modules_db, signatures_db, module_name, called_func):
+    """Find functions in a module that call a specific function."""
+    # Get all functions in the module
+    functions_in_module = find_functions_in_module(modules_db, signatures_db, module_name)
+    
+    if functions_in_module is None:
+        return None
+    
+    if not functions_in_module:
+        return []
+    
+    # For each function, check if it calls the target function
+    conn_sig = sqlite3.connect(signatures_db)
+    conn_sig.row_factory = sqlite3.Row
+    c_sig = conn_sig.cursor()
+    
+    results = []
+    for func in functions_in_module:
+        c_sig.execute('''SELECT c.called_function_name, c.line_number FROM calls c
+                         JOIN functions f ON c.function_id = f.id
+                         WHERE f.name = ? AND c.called_function_name = ?''',
+                     (func['name'], called_func))
+        calls = c_sig.fetchall()
+        
+        if calls:
+            func_result = dict(func)
+            func_result['calls'] = [dict(call) for call in calls]
+            results.append(func_result)
+    
+    conn_sig.close()
+    return results
+
+def find_module_dependencies(modules_db, signatures_db, module_name):
+    """Find all modules that a module depends on (via function calls)."""
+    # Get all functions in the module
+    functions_in_module = find_functions_in_module(modules_db, signatures_db, module_name)
+    
+    if functions_in_module is None:
+        return None
+    
+    if not functions_in_module:
+        return []
+    
+    # Get all functions called by functions in this module
+    conn_sig = sqlite3.connect(signatures_db)
+    conn_sig.row_factory = sqlite3.Row
+    c_sig = conn_sig.cursor()
+    
+    called_functions = set()
+    for func in functions_in_module:
+        c_sig.execute('''SELECT DISTINCT c.called_function_name FROM calls c
+                         JOIN functions f ON c.function_id = f.id
+                         WHERE f.name = ?''', (func['name'],))
+        for row in c_sig.fetchall():
+            called_functions.add(row['called_function_name'])
+    
+    # For each called function, find which module it belongs to
+    conn_mod = sqlite3.connect(modules_db)
+    conn_mod.row_factory = sqlite3.Row
+    c_mod = conn_mod.cursor()
+    
+    dependent_modules = set()
+    for called_func in called_functions:
+        modules = find_module_for_function(modules_db, signatures_db, called_func)
+        if modules:
+            for mod in modules:
+                if mod['name'] != module_name:  # Exclude self-references
+                    dependent_modules.add(mod['name'])
+    
+    conn_sig.close()
+    conn_mod.close()
+    
+    return sorted(list(dependent_modules))
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: query_db.py <command> <db_file> [args...]", file=sys.stderr)
@@ -183,63 +338,129 @@ def main():
         print("  list_file_modules <filename>        - Find modules using a file", file=sys.stderr)
         print("  find_function_dependencies <name>   - Find all functions called by a function", file=sys.stderr)
         print("  find_function_dependents <name>     - Find all functions that call a function", file=sys.stderr)
+        print("  find_functions_in_module <module>   - Find all functions in a module", file=sys.stderr)
+        print("  find_module_for_function <name>     - Find which module(s) contain a function", file=sys.stderr)
+        print("  find_functions_calling_in_module <module> <func> - Find functions in module that call a function", file=sys.stderr)
+        print("  find_module_dependencies <module>   - Find modules that a module depends on", file=sys.stderr)
         sys.exit(1)
     
     command = sys.argv[1]
-    db_file = sys.argv[2]
     
-    if not Path(db_file).exists():
-        print(f"Error: {db_file} not found", file=sys.stderr)
-        sys.exit(1)
+    # Commands that need two databases (modules_db, signatures_db)
+    two_db_commands = {
+        'find_functions_in_module',
+        'find_module_for_function',
+        'find_functions_calling_in_module',
+        'find_module_dependencies'
+    }
     
-    try:
-        if command == "find_function" and len(sys.argv) > 3:
-            results = query_function(db_file, sys.argv[3])
-            print(json.dumps(results, indent=2))
+    if command in two_db_commands:
+        if len(sys.argv) < 4:
+            print(f"Error: {command} requires two database files", file=sys.stderr)
+            sys.exit(1)
+        modules_db = sys.argv[2]
+        signatures_db = sys.argv[3]
         
-        elif command == "search_functions" and len(sys.argv) > 3:
-            results = search_functions(db_file, sys.argv[3])
-            print(json.dumps(results, indent=2))
+        if not Path(modules_db).exists():
+            print(f"Error: {modules_db} not found", file=sys.stderr)
+            sys.exit(1)
+        if not Path(signatures_db).exists():
+            print(f"Error: {signatures_db} not found", file=sys.stderr)
+            sys.exit(1)
         
-        elif command == "list_file_functions" and len(sys.argv) > 3:
-            results = list_functions_in_file(db_file, sys.argv[3])
-            print(json.dumps(results, indent=2))
-        
-        elif command == "find_module" and len(sys.argv) > 3:
-            result = query_module(db_file, sys.argv[3])
-            if result:
-                print(json.dumps(result, indent=2))
+        try:
+            if command == "find_functions_in_module" and len(sys.argv) > 4:
+                results = find_functions_in_module(modules_db, signatures_db, sys.argv[4])
+                if results is None:
+                    print(f"Module '{sys.argv[4]}' not found", file=sys.stderr)
+                    sys.exit(1)
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_module_for_function" and len(sys.argv) > 4:
+                results = find_module_for_function(modules_db, signatures_db, sys.argv[4])
+                if results is None:
+                    print(f"Function '{sys.argv[4]}' not found", file=sys.stderr)
+                    sys.exit(1)
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_functions_calling_in_module" and len(sys.argv) > 5:
+                results = find_functions_calling_in_module(modules_db, signatures_db, sys.argv[4], sys.argv[5])
+                if results is None:
+                    print(f"Module '{sys.argv[4]}' not found", file=sys.stderr)
+                    sys.exit(1)
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_module_dependencies" and len(sys.argv) > 4:
+                results = find_module_dependencies(modules_db, signatures_db, sys.argv[4])
+                if results is None:
+                    print(f"Module '{sys.argv[4]}' not found", file=sys.stderr)
+                    sys.exit(1)
+                print(json.dumps(results, indent=2))
+            
             else:
-                print(f"Module '{sys.argv[3]}' not found", file=sys.stderr)
+                print(f"Error: Unknown command or missing arguments", file=sys.stderr)
                 sys.exit(1)
         
-        elif command == "search_modules" and len(sys.argv) > 3:
-            results = search_modules(db_file, sys.argv[3])
-            for name in results:
-                print(name)
-        
-        elif command == "list_file_modules" and len(sys.argv) > 3:
-            results = list_modules_for_file(db_file, sys.argv[3])
-            print(json.dumps(results, indent=2))
-        
-        elif command == "find_function_dependencies" and len(sys.argv) > 3:
-            results = find_function_dependencies(db_file, sys.argv[3])
-            if results is None:
-                print(f"Function '{sys.argv[3]}' not found", file=sys.stderr)
-                sys.exit(1)
-            print(json.dumps(results, indent=2))
-        
-        elif command == "find_function_dependents" and len(sys.argv) > 3:
-            results = find_function_dependents(db_file, sys.argv[3])
-            print(json.dumps(results, indent=2))
-        
-        else:
-            print(f"Error: Unknown command or missing arguments", file=sys.stderr)
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
             sys.exit(1)
     
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    else:
+        # Single database commands
+        db_file = sys.argv[2]
+        
+        if not Path(db_file).exists():
+            print(f"Error: {db_file} not found", file=sys.stderr)
+            sys.exit(1)
+        
+        try:
+            if command == "find_function" and len(sys.argv) > 3:
+                results = query_function(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "search_functions" and len(sys.argv) > 3:
+                results = search_functions(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "list_file_functions" and len(sys.argv) > 3:
+                results = list_functions_in_file(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_module" and len(sys.argv) > 3:
+                result = query_module(db_file, sys.argv[3])
+                if result:
+                    print(json.dumps(result, indent=2))
+                else:
+                    print(f"Module '{sys.argv[3]}' not found", file=sys.stderr)
+                    sys.exit(1)
+            
+            elif command == "search_modules" and len(sys.argv) > 3:
+                results = search_modules(db_file, sys.argv[3])
+                for name in results:
+                    print(name)
+            
+            elif command == "list_file_modules" and len(sys.argv) > 3:
+                results = list_modules_for_file(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_function_dependencies" and len(sys.argv) > 3:
+                results = find_function_dependencies(db_file, sys.argv[3])
+                if results is None:
+                    print(f"Function '{sys.argv[3]}' not found", file=sys.stderr)
+                    sys.exit(1)
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_function_dependents" and len(sys.argv) > 3:
+                results = find_function_dependents(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            else:
+                print(f"Error: Unknown command or missing arguments", file=sys.stderr)
+                sys.exit(1)
+        
+        except Exception as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
 
 if __name__ == "__main__":
     main()
