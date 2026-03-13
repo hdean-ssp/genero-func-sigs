@@ -148,9 +148,9 @@ bash query.sh list-file-functions "path/to/file.4gl"
 ```
 
 **Benefits:**
-- 100x smaller files (70KB vs 15-20MB)
-- Instant queries (<1ms for exact lookups)
+- Fast indexed queries (<1ms for exact lookups)
 - Fully indexed for fast pattern matching
+- Efficient storage with proper indexing
 
 See [QUERYING.md](QUERYING.md) for complete documentation.
 
