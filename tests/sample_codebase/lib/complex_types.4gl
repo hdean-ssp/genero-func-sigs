@@ -1,3 +1,12 @@
+#----------------------------------------------------------------------------------------
+#  Program      : complex_types.4gl
+#  Description  : Functions with complex parameter types
+#----------------------------------------------------------------------------------------
+#  Modifications:
+# Ref        Date            Author          Description
+#EH100512    19/08/2024      Chilly          Complex type handling
+#----------------------------------------------------------------------------------------
+
 # Functions with complex parameter types
 
 FUNCTION process_record(rec, status_flag)

@@ -1,12 +1,12 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "generated": "2026-03-13T11:05:07Z",
+    "generated": "2026-03-13T11:07:32Z",
     "source_files": {
       "workspace": {},
       "modules": {
         "version": "1.0.0",
-        "generated": "2026-03-13T11:05:07Z",
+        "generated": "2026-03-13T11:07:32Z",
         "files_processed": 9
       }
     }
@@ -367,6 +367,100 @@
               "name": "validate_number",
               "line": 52
             }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100466-4",
+              "author": "Rich",
+              "date": "2024-03-20",
+              "description": "Initial"
+            },
+            {
+              "reference": "EH100539-4",
+              "author": "Greg",
+              "date": "2024-05-30",
+              "description": "Ad-hoc SMS Messaging"
+            },
+            {
+              "reference": "EH100512-2",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Email integration"
+            },
+            {
+              "reference": "PRB-299",
+              "author": "MartinB",
+              "date": "2024-08-28",
+              "description": "Enhanced MailMerge Error Handling"
+            },
+            {
+              "reference": "EH100512-9",
+              "author": "Chilly",
+              "date": "2024-08-29",
+              "description": "Job scheduler send file attachments"
+            },
+            {
+              "reference": "PRB-337",
+              "author": "MartinB",
+              "date": "2024-09-05",
+              "description": "Removed changes for PRB-299"
+            },
+            {
+              "reference": "EH100512-15",
+              "author": "Chris P",
+              "date": "2024-09-06",
+              "description": "Don't run SMS/Email if not active"
+            },
+            {
+              "reference": "EH100512-9a",
+              "author": "Chilly",
+              "date": "2024-09-19",
+              "description": "Use job_task_params for commshub for passing file attachments"
+            },
+            {
+              "reference": "EH100512",
+              "author": "Chris P",
+              "date": "2024-10-16",
+              "description": "No background form required"
+            },
+            {
+              "reference": "SR-40356-3",
+              "author": "Rich",
+              "date": "2025-04-01",
+              "description": "Error email service"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Rich",
+              "first_change": "2024-03-20",
+              "last_change": "2025-04-01",
+              "count": 2
+            },
+            {
+              "author": "Greg",
+              "first_change": "2024-05-30",
+              "last_change": "2024-05-30",
+              "count": 1
+            },
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-09-19",
+              "count": 3
+            },
+            {
+              "author": "MartinB",
+              "first_change": "2024-08-28",
+              "last_change": "2024-09-05",
+              "count": 2
+            },
+            {
+              "author": "Chris P",
+              "first_change": "2024-09-06",
+              "last_change": "2024-10-16",
+              "count": 2
+            }
           ]
         },
         {
@@ -393,6 +487,100 @@
               "name": "format_string",
               "line": 63
             }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100466-4",
+              "author": "Rich",
+              "date": "2024-03-20",
+              "description": "Initial"
+            },
+            {
+              "reference": "EH100539-4",
+              "author": "Greg",
+              "date": "2024-05-30",
+              "description": "Ad-hoc SMS Messaging"
+            },
+            {
+              "reference": "EH100512-2",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Email integration"
+            },
+            {
+              "reference": "PRB-299",
+              "author": "MartinB",
+              "date": "2024-08-28",
+              "description": "Enhanced MailMerge Error Handling"
+            },
+            {
+              "reference": "EH100512-9",
+              "author": "Chilly",
+              "date": "2024-08-29",
+              "description": "Job scheduler send file attachments"
+            },
+            {
+              "reference": "PRB-337",
+              "author": "MartinB",
+              "date": "2024-09-05",
+              "description": "Removed changes for PRB-299"
+            },
+            {
+              "reference": "EH100512-15",
+              "author": "Chris P",
+              "date": "2024-09-06",
+              "description": "Don't run SMS/Email if not active"
+            },
+            {
+              "reference": "EH100512-9a",
+              "author": "Chilly",
+              "date": "2024-09-19",
+              "description": "Use job_task_params for commshub for passing file attachments"
+            },
+            {
+              "reference": "EH100512",
+              "author": "Chris P",
+              "date": "2024-10-16",
+              "description": "No background form required"
+            },
+            {
+              "reference": "SR-40356-3",
+              "author": "Rich",
+              "date": "2025-04-01",
+              "description": "Error email service"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Rich",
+              "first_change": "2024-03-20",
+              "last_change": "2025-04-01",
+              "count": 2
+            },
+            {
+              "author": "Greg",
+              "first_change": "2024-05-30",
+              "last_change": "2024-05-30",
+              "count": 1
+            },
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-09-19",
+              "count": 3
+            },
+            {
+              "author": "MartinB",
+              "first_change": "2024-08-28",
+              "last_change": "2024-09-05",
+              "count": 2
+            },
+            {
+              "author": "Chris P",
+              "first_change": "2024-09-06",
+              "last_change": "2024-10-16",
+              "count": 2
+            }
           ]
         },
         {
@@ -408,6 +596,100 @@
             {
               "name": "log_message",
               "line": 70
+            }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100466-4",
+              "author": "Rich",
+              "date": "2024-03-20",
+              "description": "Initial"
+            },
+            {
+              "reference": "EH100539-4",
+              "author": "Greg",
+              "date": "2024-05-30",
+              "description": "Ad-hoc SMS Messaging"
+            },
+            {
+              "reference": "EH100512-2",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Email integration"
+            },
+            {
+              "reference": "PRB-299",
+              "author": "MartinB",
+              "date": "2024-08-28",
+              "description": "Enhanced MailMerge Error Handling"
+            },
+            {
+              "reference": "EH100512-9",
+              "author": "Chilly",
+              "date": "2024-08-29",
+              "description": "Job scheduler send file attachments"
+            },
+            {
+              "reference": "PRB-337",
+              "author": "MartinB",
+              "date": "2024-09-05",
+              "description": "Removed changes for PRB-299"
+            },
+            {
+              "reference": "EH100512-15",
+              "author": "Chris P",
+              "date": "2024-09-06",
+              "description": "Don't run SMS/Email if not active"
+            },
+            {
+              "reference": "EH100512-9a",
+              "author": "Chilly",
+              "date": "2024-09-19",
+              "description": "Use job_task_params for commshub for passing file attachments"
+            },
+            {
+              "reference": "EH100512",
+              "author": "Chris P",
+              "date": "2024-10-16",
+              "description": "No background form required"
+            },
+            {
+              "reference": "SR-40356-3",
+              "author": "Rich",
+              "date": "2025-04-01",
+              "description": "Error email service"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Rich",
+              "first_change": "2024-03-20",
+              "last_change": "2025-04-01",
+              "count": 2
+            },
+            {
+              "author": "Greg",
+              "first_change": "2024-05-30",
+              "last_change": "2024-05-30",
+              "count": 1
+            },
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-09-19",
+              "count": 3
+            },
+            {
+              "author": "MartinB",
+              "first_change": "2024-08-28",
+              "last_change": "2024-09-05",
+              "count": 2
+            },
+            {
+              "author": "Chris P",
+              "first_change": "2024-09-06",
+              "last_change": "2024-10-16",
+              "count": 2
             }
           ]
         },
@@ -429,6 +711,100 @@
             {
               "name": "log_message",
               "line": 77
+            }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100466-4",
+              "author": "Rich",
+              "date": "2024-03-20",
+              "description": "Initial"
+            },
+            {
+              "reference": "EH100539-4",
+              "author": "Greg",
+              "date": "2024-05-30",
+              "description": "Ad-hoc SMS Messaging"
+            },
+            {
+              "reference": "EH100512-2",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Email integration"
+            },
+            {
+              "reference": "PRB-299",
+              "author": "MartinB",
+              "date": "2024-08-28",
+              "description": "Enhanced MailMerge Error Handling"
+            },
+            {
+              "reference": "EH100512-9",
+              "author": "Chilly",
+              "date": "2024-08-29",
+              "description": "Job scheduler send file attachments"
+            },
+            {
+              "reference": "PRB-337",
+              "author": "MartinB",
+              "date": "2024-09-05",
+              "description": "Removed changes for PRB-299"
+            },
+            {
+              "reference": "EH100512-15",
+              "author": "Chris P",
+              "date": "2024-09-06",
+              "description": "Don't run SMS/Email if not active"
+            },
+            {
+              "reference": "EH100512-9a",
+              "author": "Chilly",
+              "date": "2024-09-19",
+              "description": "Use job_task_params for commshub for passing file attachments"
+            },
+            {
+              "reference": "EH100512",
+              "author": "Chris P",
+              "date": "2024-10-16",
+              "description": "No background form required"
+            },
+            {
+              "reference": "SR-40356-3",
+              "author": "Rich",
+              "date": "2025-04-01",
+              "description": "Error email service"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Rich",
+              "first_change": "2024-03-20",
+              "last_change": "2025-04-01",
+              "count": 2
+            },
+            {
+              "author": "Greg",
+              "first_change": "2024-05-30",
+              "last_change": "2024-05-30",
+              "count": 1
+            },
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-09-19",
+              "count": 3
+            },
+            {
+              "author": "MartinB",
+              "first_change": "2024-08-28",
+              "last_change": "2024-09-05",
+              "count": 2
+            },
+            {
+              "author": "Chris P",
+              "first_change": "2024-09-06",
+              "last_change": "2024-10-16",
+              "count": 2
             }
           ]
         }
@@ -841,10 +1217,10 @@
         {
           "name": "process_record",
           "line": {
-            "start": 3,
-            "end": 16
+            "start": 12,
+            "end": 25
           },
-          "signature": "3-16: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
+          "signature": "12-25: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
           "parameters": [
             {
               "name": "rec",
@@ -864,21 +1240,37 @@
           "calls": [
             {
               "name": "validate_record",
-              "line": 13
+              "line": 22
             },
             {
               "name": "check_status",
-              "line": 14
+              "line": 23
+            }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100512",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Complex type handling"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-08-19",
+              "count": 1
             }
           ]
         },
         {
           "name": "get_date_range",
           "line": {
-            "start": 18,
-            "end": 31
+            "start": 27,
+            "end": 40
           },
-          "signature": "18-31: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
+          "signature": "27-40: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
           "parameters": [
             {
               "name": "start_date",
@@ -902,21 +1294,37 @@
           "calls": [
             {
               "name": "validate_dates",
-              "line": 27
+              "line": 36
             },
             {
               "name": "calculate_days",
-              "line": 28
+              "line": 37
+            }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100512",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Complex type handling"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-08-19",
+              "count": 1
             }
           ]
         },
         {
           "name": "transform_data",
           "line": {
-            "start": 33,
-            "end": 48
+            "start": 42,
+            "end": 57
           },
-          "signature": "33-48: transform_data(input_rec RECORD):output_rec RECORD",
+          "signature": "42-57: transform_data(input_rec RECORD):output_rec RECORD",
           "parameters": [
             {
               "name": "input_rec",
@@ -932,7 +1340,23 @@
           "calls": [
             {
               "name": "preprocess_record",
-              "line": 43
+              "line": 52
+            }
+          ],
+          "file_references": [
+            {
+              "reference": "EH100512",
+              "author": "Chilly",
+              "date": "2024-08-19",
+              "description": "Complex type handling"
+            }
+          ],
+          "file_authors": [
+            {
+              "author": "Chilly",
+              "first_change": "2024-08-19",
+              "last_change": "2024-08-19",
+              "count": 1
             }
           ]
         }
