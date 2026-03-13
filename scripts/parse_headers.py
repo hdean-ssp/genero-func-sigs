@@ -9,6 +9,7 @@ Handles flexible column parsing for change history tables with variations in:
 - Various reference ID formats
 """
 
+import os
 import re
 import sys
 from typing import List, Dict, Tuple, Optional
@@ -67,8 +68,24 @@ class HeaderParser:
             # Aggregate author information
             authors = self._aggregate_authors(references)
             
+            # Normalize filepath - resolve .. and . components
+            # Use realpath if file exists, otherwise normalize the path
+            try:
+                normalized_path = os.path.realpath(filepath)
+                # Convert absolute path back to relative if needed
+                try:
+                    normalized_path = os.path.relpath(normalized_path)
+                except ValueError:
+                    pass
+            except Exception:
+                normalized_path = os.path.normpath(filepath)
+            
+            # Ensure relative paths start with ./
+            if not normalized_path.startswith('./') and not normalized_path.startswith('/'):
+                normalized_path = './' + normalized_path
+            
             return {
-                'file': filepath,
+                'file': normalized_path,
                 'file_references': references,
                 'file_authors': authors
             }
@@ -269,8 +286,14 @@ class HeaderParser:
             if next_col_pos is None:
                 next_col_pos = len(line)
             
-            # Extract reference (trim whitespace)
-            reference = line[ref_pos:next_col_pos].strip()
+            # Extract reference - look for first whitespace or next column
+            ref_section = line[ref_pos:next_col_pos]
+            # Find where the reference ends (first significant whitespace)
+            ref_match = re.match(r'(\S+)', ref_section)
+            if ref_match:
+                reference = ref_match.group(1)
+            else:
+                reference = ref_section.strip()
         
         # Extract date
         date_match = self.DATE_PATTERN.search(line)
