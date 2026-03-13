@@ -51,12 +51,35 @@ done
 
 # Step 3: Merge headers into workspace.json using Python
 if [[ -s "$HEADERS_TEMP" ]]; then
-    python3 "$PROJECT_ROOT/scripts/merge_headers.py" "$OUTPUT_FILE" "$HEADERS_TEMP" "$HEADERS_FILE"
+    python3 "$PROJECT_ROOT/scripts/merge_headers.py" "$OUTPUT_FILE" "$HEADERS_TEMP" "$OUTPUT_FILE"
     if [[ "$VERBOSE" == "1" ]]; then
-        echo "Generated $HEADERS_FILE with extracted headers" >&2
+        echo "Merged headers into $OUTPUT_FILE" >&2
+    fi
+fi
+
+# Step 4: Generate SQLite database with headers (if CREATE_DB is set)
+if [[ "${CREATE_DB:-0}" == "1" ]]; then
+    DB_FILE="${OUTPUT_FILE%.json}.db"
+    
+    # Remove existing database to avoid constraint errors
+    rm -f "$DB_FILE"
+    
+    # Create signatures database
+    python3 "$PROJECT_ROOT/scripts/json_to_sqlite.py" signatures "$OUTPUT_FILE" "$DB_FILE"
+    
+    # Add header tables to database
+    if [[ -s "$HEADERS_TEMP" ]]; then
+        python3 "$PROJECT_ROOT/scripts/json_to_sqlite_headers.py" "$HEADERS_TEMP" "$DB_FILE"
+        if [[ "$VERBOSE" == "1" ]]; then
+            echo "Added header metadata to $DB_FILE" >&2
+        fi
+    fi
+    
+    if [[ "$VERBOSE" == "1" ]]; then
+        echo "Generated $DB_FILE for fast querying" >&2
     fi
 fi
 
 if [[ "$VERBOSE" == "1" ]]; then
-    echo "Complete! Generated $OUTPUT_FILE and $HEADERS_FILE" >&2
+    echo "Complete! Generated $OUTPUT_FILE with header metadata" >&2
 fi

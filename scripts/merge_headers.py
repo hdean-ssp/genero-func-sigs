@@ -32,9 +32,11 @@ def merge_headers(workspace_file: str, headers_temp_file: str, output_file: str)
     """
     Merge header metadata into workspace.json.
     
+    Adds file_references and file_authors to each file's entry in the workspace.
+    
     Args:
         workspace_file: Path to workspace.json with signatures
-        headers_temp_file: Path to temp file with header data (one JSON per line)
+        headers_temp_file: Path to temp file with header data (one JSON per file)
         output_file: Path to output file with merged data
     """
     # Load workspace.json
@@ -46,7 +48,7 @@ def merge_headers(workspace_file: str, headers_temp_file: str, output_file: str)
         sys.exit(1)
     
     # Build a map of file paths to header data
-    file_headers = {}
+    file_headers_map = {}
     
     try:
         with open(headers_temp_file, 'r') as f:
@@ -56,22 +58,38 @@ def merge_headers(workspace_file: str, headers_temp_file: str, output_file: str)
                     continue
                 
                 try:
-                    # Each line is a JSON object from parse_headers.py
-                    # But parse_headers.py outputs one JSON per file, not per line
-                    # So we need to handle this differently
                     data = json.loads(line)
-                    # This is actually a full result from parse_headers.py
-                    # We'll store it as-is for now
-                    file_headers[line] = data
+                    filepath = data.get('file')
+                    if filepath:
+                        # Normalize path to match workspace.json format
+                        normalized_path = normalize_path(filepath)
+                        file_headers_map[normalized_path] = {
+                            'file_references': data.get('file_references', []),
+                            'file_authors': data.get('file_authors', [])
+                        }
                 except json.JSONDecodeError:
                     continue
     except Exception as e:
-        print(f"Error reading {headers_temp_file}: {e}", file=sys.stderr)
+        print(f"Warning: Could not read headers file: {e}", file=sys.stderr)
         # Continue without headers if file doesn't exist
         pass
     
-    # For now, just save the workspace as-is
-    # The headers will be stored separately and can be queried via the database
+    # Merge headers into workspace
+    # For each file in workspace, add its header metadata
+    for filepath in workspace:
+        if filepath.startswith('_'):
+            # Skip metadata entries
+            continue
+        
+        if filepath in file_headers_map:
+            header_data = file_headers_map[filepath]
+            # Add header metadata to each function in the file
+            if isinstance(workspace[filepath], list):
+                for func in workspace[filepath]:
+                    func['file_references'] = header_data['file_references']
+                    func['file_authors'] = header_data['file_authors']
+    
+    # Save merged workspace
     try:
         with open(output_file, 'w') as f:
             json.dump(workspace, f, indent=2)

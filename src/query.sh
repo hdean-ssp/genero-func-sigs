@@ -29,6 +29,15 @@ Module queries (modules.db):
   search-modules <pattern>            Search modules by name pattern
   list-file-modules <filename>        Find modules using a file
 
+Header/Reference queries (workspace.db):
+  find-reference <ref>                Find files modified for a code reference
+  find-author <author>                Find files modified by an author
+  file-references <path>              Get all references for a file
+  file-authors <path>                 Get all authors who modified a file
+  author-expertise <author>           Show what areas an author has expertise in
+  recent-changes [days]               Find files modified in last N days (default 30)
+  search-references <pattern>         Search references by pattern
+
 Database management:
   create-dbs                          Create both databases from JSON files
   create-signatures-db                Create workspace.db from workspace.json
@@ -38,9 +47,11 @@ Examples:
   query.sh find-function my_function
   query.sh search-functions "get_*"
   query.sh find-function-dependencies my_function
-  query.sh find-function-dependents my_function
-  query.sh find-module core
-  query.sh list-file-modules "util.4gl"
+  query.sh find-reference PRB-299
+  query.sh find-author "John Smith"
+  query.sh file-references "./src/utils.4gl"
+  query.sh author-expertise "John Smith"
+  query.sh recent-changes 7
 EOF
 }
 
@@ -95,6 +106,27 @@ case "$command" in
         ;;
     create-modules-db)
         python3 "$PROJECT_ROOT/scripts/json_to_sqlite.py" modules "$PROJECT_ROOT/modules.json" "$PROJECT_ROOT/$MODULES_DB"
+        ;;
+    find-reference)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" find-reference "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    find-author)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" find-author "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    file-references)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" file-references "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    file-authors)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" file-authors "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    author-expertise)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" author-expertise "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    recent-changes)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" recent-changes "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
+        ;;
+    search-references)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" search-references "$PROJECT_ROOT/$SIGNATURES_DB" "$@"
         ;;
     *)
         echo "Unknown command: $command" >&2

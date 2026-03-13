@@ -51,7 +51,7 @@ class HeaderParser:
                 lines = f.readlines()
         except Exception as e:
             print(f"Error reading file {filepath}: {e}", file=sys.stderr)
-            return {'file_references': [], 'file_authors': {}}
+            return {'file': filepath, 'file_references': [], 'file_authors': {}}
         
         # Extract header comments (first N lines)
         header_lines = self._extract_header_comments(lines)
@@ -63,6 +63,7 @@ class HeaderParser:
         authors = self._aggregate_authors(references)
         
         return {
+            'file': filepath,
             'file_references': references,
             'file_authors': authors
         }
