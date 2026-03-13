@@ -89,7 +89,7 @@ if [[ $GL4_COUNT -gt 0 ]]; then
     # Process all .4gl files to extract headers
     # Continue even if some files fail to parse
     find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
-        python3 "$SCRIPT_DIR/scripts/parse_headers.py" "$file" >> "$HEADERS_TEMP" 2>/dev/null || true
+        python3 "$SCRIPT_DIR/scripts/parse_headers.py" "$file" "$TARGET" >> "$HEADERS_TEMP" 2>/dev/null || true
     done
     
     # Merge headers into workspace.json (only if we have headers)
@@ -152,7 +152,7 @@ if [[ $GL4_COUNT -gt 0 ]]; then
     trap 'rm -f "$HEADERS_TEMP"' EXIT
     
     find "$TARGET" -name "*.4gl" -type f -print0 | while IFS= read -r -d '' file; do
-        python3 "$SCRIPT_DIR/scripts/parse_headers.py" "$file" >> "$HEADERS_TEMP" 2>/dev/null || true
+        python3 "$SCRIPT_DIR/scripts/parse_headers.py" "$file" "$TARGET" >> "$HEADERS_TEMP" 2>/dev/null || true
     done
     
     if [[ -s "$HEADERS_TEMP" ]]; then

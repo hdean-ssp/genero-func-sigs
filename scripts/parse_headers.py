@@ -37,12 +37,13 @@ class HeaderParser:
         """
         self.max_header_lines = max_header_lines
     
-    def parse_file(self, filepath: str) -> Optional[Dict]:
+    def parse_file(self, filepath: str, base_dir: str = None) -> Optional[Dict]:
         """
         Parse a file and extract header metadata.
         
         Args:
             filepath: Path to .4gl file
+            base_dir: Base directory to make filepath relative to (optional)
             
         Returns:
             Dictionary with extracted references and authors, or None if no headers found
@@ -68,21 +69,33 @@ class HeaderParser:
             # Aggregate author information
             authors = self._aggregate_authors(references)
             
-            # Normalize filepath - resolve .. and . components
-            # Use realpath if file exists, otherwise normalize the path
-            try:
-                normalized_path = os.path.realpath(filepath)
-                # Convert absolute path back to relative if needed
+            # Normalize filepath relative to base_dir
+            if base_dir:
                 try:
-                    normalized_path = os.path.relpath(normalized_path)
-                except ValueError:
-                    pass
-            except Exception:
-                normalized_path = os.path.normpath(filepath)
+                    # Make both paths absolute for comparison
+                    abs_filepath = os.path.abspath(filepath)
+                    abs_base = os.path.abspath(base_dir)
+                    # Get relative path from base_dir
+                    normalized_path = os.path.relpath(abs_filepath, abs_base)
+                except (ValueError, TypeError):
+                    # Fallback to original filepath if relpath fails
+                    normalized_path = filepath
+            else:
+                # If no base_dir, use realpath to normalize .. and . components
+                try:
+                    normalized_path = os.path.realpath(filepath)
+                    try:
+                        normalized_path = os.path.relpath(normalized_path)
+                    except ValueError:
+                        pass
+                except Exception:
+                    normalized_path = os.path.normpath(filepath)
             
-            # Ensure relative paths start with ./
-            if not normalized_path.startswith('./') and not normalized_path.startswith('/'):
-                normalized_path = './' + normalized_path
+            # Ensure relative paths start with ./ only if they contain path separators
+            # (i.e., only for subdirectory files, not for root-level files)
+            if '/' in normalized_path or '\\' in normalized_path:
+                if not normalized_path.startswith('./') and not normalized_path.startswith('/'):
+                    normalized_path = './' + normalized_path
             
             return {
                 'file': normalized_path,
@@ -391,12 +404,14 @@ class HeaderParser:
 def main():
     """Command-line interface for header parser."""
     if len(sys.argv) < 2:
-        print("Usage: python3 parse_headers.py <file.4gl>", file=sys.stderr)
+        print("Usage: python3 parse_headers.py <file.4gl> [base_dir]", file=sys.stderr)
         sys.exit(1)
     
     filepath = sys.argv[1]
+    base_dir = sys.argv[2] if len(sys.argv) > 2 else None
+    
     parser = HeaderParser()
-    result = parser.parse_file(filepath)
+    result = parser.parse_file(filepath, base_dir)
     
     # Only output if we found headers
     if result:

@@ -1,7 +1,7 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "generated": "2026-03-13T10:47:49Z",
+    "generated": "2026-03-13T11:20:27Z",
     "files_processed": 7
   },
   "./tests/sample_codebase/no_returns.4gl": [
@@ -810,10 +810,10 @@
     {
       "name": "process_record",
       "line": {
-        "start": 3,
-        "end": 16
+        "start": 12,
+        "end": 25
       },
-      "signature": "3-16: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
+      "signature": "12-25: process_record(rec RECORD, status_flag CHAR(1)):success SMALLINT",
       "parameters": [
         {
           "name": "rec",
@@ -833,21 +833,21 @@
       "calls": [
         {
           "name": "validate_record",
-          "line": 13
+          "line": 22
         },
         {
           "name": "check_status",
-          "line": 14
+          "line": 23
         }
       ]
     },
     {
       "name": "get_date_range",
       "line": {
-        "start": 18,
-        "end": 31
+        "start": 27,
+        "end": 40
       },
-      "signature": "18-31: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
+      "signature": "27-40: get_date_range(start_date DATE, end_date DATE):days_between INTEGER, is_valid SMALLINT",
       "parameters": [
         {
           "name": "start_date",
@@ -871,21 +871,21 @@
       "calls": [
         {
           "name": "validate_dates",
-          "line": 27
+          "line": 36
         },
         {
           "name": "calculate_days",
-          "line": 28
+          "line": 37
         }
       ]
     },
     {
       "name": "transform_data",
       "line": {
-        "start": 33,
-        "end": 48
+        "start": 42,
+        "end": 57
       },
-      "signature": "33-48: transform_data(input_rec RECORD):output_rec RECORD",
+      "signature": "42-57: transform_data(input_rec RECORD):output_rec RECORD",
       "parameters": [
         {
           "name": "input_rec",
@@ -901,7 +901,7 @@
       "calls": [
         {
           "name": "preprocess_record",
-          "line": 43
+          "line": 52
         }
       ]
     }

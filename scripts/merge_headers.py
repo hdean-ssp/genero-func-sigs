@@ -48,6 +48,7 @@ def merge_headers(workspace_file: str, headers_temp_file: str, output_file: str)
         sys.exit(1)
     
     # Build a map of file paths to header data
+    # We need to handle both relative and absolute paths
     file_headers_map = {}
     
     try:
@@ -62,12 +63,16 @@ def merge_headers(workspace_file: str, headers_temp_file: str, output_file: str)
                         data = json.loads(line)
                         filepath = data.get('file')
                         if filepath:
-                            # Normalize path to match workspace.json format
-                            normalized_path = normalize_path(filepath)
-                            file_headers_map[normalized_path] = {
+                            # Store both the original path and normalized versions
+                            # to handle matching with workspace.json paths
+                            file_headers_map[filepath] = {
                                 'file_references': data.get('file_references', []),
                                 'file_authors': data.get('file_authors', [])
                             }
+                            
+                            # Also store normalized version
+                            normalized_path = normalize_path(filepath)
+                            file_headers_map[normalized_path] = file_headers_map[filepath]
                     except json.JSONDecodeError:
                         # Skip malformed JSON lines
                         continue
@@ -82,8 +87,34 @@ def merge_headers(workspace_file: str, headers_temp_file: str, output_file: str)
             # Skip metadata entries
             continue
         
+        # Try to find matching header data
+        header_data = None
+        
+        # First try exact match
         if filepath in file_headers_map:
             header_data = file_headers_map[filepath]
+        else:
+            # Try to match by comparing the relative path components
+            # workspace paths are like: ./tests/sample_codebase/simple_functions.4gl
+            # header paths are like: simple_functions.4gl or ./lib/complex_types.4gl
+            
+            for header_path, data in file_headers_map.items():
+                # Normalize both paths for comparison
+                ws_normalized = filepath.lstrip('./')
+                hdr_normalized = header_path.lstrip('./')
+                
+                # Check if header path is a suffix of workspace path
+                # This handles both root files and subdirectory files
+                if ws_normalized.endswith(hdr_normalized):
+                    # Verify it's a proper path boundary (not partial filename match)
+                    # e.g., "complex_types.4gl" should match "lib/complex_types.4gl"
+                    # but not "my_complex_types.4gl"
+                    if len(ws_normalized) == len(hdr_normalized) or \
+                       ws_normalized[-(len(hdr_normalized)+1)] == os.sep:
+                        header_data = data
+                        break
+        
+        if header_data:
             # Add header metadata to each function in the file
             if isinstance(workspace[filepath], list):
                 for func in workspace[filepath]:
