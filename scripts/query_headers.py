@@ -32,10 +32,10 @@ def find_files_by_reference(db_file: str, reference: str) -> List[Dict]:
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT DISTINCT f.path, fr.reference, fr.author, fr.date, fr.description
+            SELECT DISTINCT f.path, fr.reference_id, fr.author, fr.change_date, fr.description
             FROM file_references fr
             JOIN files f ON fr.file_id = f.id
-            WHERE fr.reference = ?
+            WHERE fr.reference_id = ?
             ORDER BY f.path
         """, (reference,))
         
@@ -64,11 +64,11 @@ def find_files_by_author(db_file: str, author: str) -> List[Dict]:
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT DISTINCT f.path, fr.reference, fr.author, fr.date, fr.description
+            SELECT DISTINCT f.path, fr.reference_id, fr.author, fr.change_date, fr.description
             FROM file_references fr
             JOIN files f ON fr.file_id = f.id
             WHERE fr.author = ?
-            ORDER BY f.path, fr.date DESC
+            ORDER BY f.path, fr.change_date DESC
         """, (author,))
         
         results = [dict(row) for row in cursor.fetchall()]
@@ -96,10 +96,10 @@ def get_file_references(db_file: str, filepath: str) -> List[Dict]:
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT reference, author, date, description
+            SELECT reference_id, author, change_date, description
             FROM file_references
             WHERE file_id = (SELECT id FROM files WHERE path = ?)
-            ORDER BY date DESC
+            ORDER BY change_date DESC
         """, (filepath,))
         
         results = [dict(row) for row in cursor.fetchall()]
@@ -127,7 +127,7 @@ def get_file_authors(db_file: str, filepath: str) -> List[Dict]:
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT author, first_change, last_change, change_count
+            SELECT author, first_change_date, last_change_date, change_count
             FROM file_authors
             WHERE file_id = (SELECT id FROM files WHERE path = ?)
             ORDER BY change_count DESC
@@ -159,7 +159,7 @@ def find_author_expertise(db_file: str, author: str) -> List[Dict]:
         
         cursor.execute("""
             SELECT f.path, COUNT(*) as change_count, 
-                   MIN(fr.date) as first_change, MAX(fr.date) as last_change
+                   MIN(fr.change_date) as first_change, MAX(fr.change_date) as last_change
             FROM file_references fr
             JOIN files f ON fr.file_id = f.id
             WHERE fr.author = ?
@@ -192,11 +192,11 @@ def find_recent_changes(db_file: str, days: int = 30) -> List[Dict]:
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT DISTINCT f.path, fr.reference, fr.author, fr.date, fr.description
+            SELECT DISTINCT f.path, fr.reference_id, fr.author, fr.change_date, fr.description
             FROM file_references fr
             JOIN files f ON fr.file_id = f.id
-            WHERE fr.date >= date('now', '-' || ? || ' days')
-            ORDER BY fr.date DESC
+            WHERE fr.change_date >= date('now', '-' || ? || ' days')
+            ORDER BY fr.change_date DESC
         """, (days,))
         
         results = [dict(row) for row in cursor.fetchall()]
@@ -224,11 +224,11 @@ def search_references(db_file: str, pattern: str) -> List[Dict]:
         cursor = conn.cursor()
         
         cursor.execute("""
-            SELECT DISTINCT f.path, fr.reference, fr.author, fr.date, fr.description
+            SELECT DISTINCT f.path, fr.reference_id, fr.author, fr.change_date, fr.description
             FROM file_references fr
             JOIN files f ON fr.file_id = f.id
-            WHERE fr.reference LIKE ?
-            ORDER BY f.path, fr.date DESC
+            WHERE fr.reference_id LIKE ?
+            ORDER BY f.path, fr.change_date DESC
         """, (pattern,))
         
         results = [dict(row) for row in cursor.fetchall()]

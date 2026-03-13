@@ -4,7 +4,24 @@
 import json
 import sqlite3
 import sys
+import os
 from pathlib import Path
+
+
+def normalize_path(path: str) -> str:
+    """Normalize path to match workspace.json format."""
+    # Convert absolute paths to relative if possible
+    if os.path.isabs(path):
+        try:
+            path = os.path.relpath(path)
+        except ValueError:
+            pass
+    
+    # Ensure relative paths start with ./
+    if not path.startswith('./') and not path.startswith('/'):
+        path = './' + path
+    
+    return path
 
 
 def create_headers_db(headers_json_file: str, db_file: str) -> None:
@@ -52,8 +69,11 @@ def create_headers_db(headers_json_file: str, db_file: str) -> None:
                     if not filepath:
                         continue
                     
+                    # Normalize path to match database
+                    normalized_path = normalize_path(filepath)
+                    
                     # Get or create file entry
-                    c.execute('SELECT id FROM files WHERE path = ?', (filepath,))
+                    c.execute('SELECT id FROM files WHERE path = ?', (normalized_path,))
                     result = c.fetchone()
                     
                     if result:

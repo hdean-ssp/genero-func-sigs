@@ -368,7 +368,8 @@ def main():
     result = parser.parse_file(filepath)
     
     import json
-    print(json.dumps(result, indent=2))
+    # Output as single line JSON for easy line-by-line processing
+    print(json.dumps(result))
 
 
 if __name__ == '__main__':
