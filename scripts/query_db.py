@@ -449,6 +449,23 @@ def find_module_dependencies(modules_db, signatures_db, module_name):
     
     return sorted(list(dependent_modules))
 
+def find_dead_code(db_file):
+    """Find functions that are never called (dead code)."""
+    conn = sqlite3.connect(db_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    # Find all functions that are not called by any other function
+    c.execute('''SELECT f.name, fi.path, f.line_start, f.line_end
+                 FROM functions f
+                 JOIN files fi ON f.file_id = fi.id
+                 WHERE f.name NOT IN (SELECT DISTINCT called_function_name FROM calls)
+                 ORDER BY fi.path, f.name''')
+    
+    results = [dict(row) for row in c.fetchall()]
+    conn.close()
+    return results
+
 def main():
     if len(sys.argv) < 3:
         print("Usage: query_db.py <command> <db_file> [args...]", file=sys.stderr)
@@ -465,6 +482,7 @@ def main():
         print("  find_module_for_function <name>     - Find which module(s) contain a function", file=sys.stderr)
         print("  find_functions_calling_in_module <module> <func> - Find functions in module that call a function", file=sys.stderr)
         print("  find_module_dependencies <module>   - Find modules that a module depends on", file=sys.stderr)
+        print("  find_dead_code                      - Find functions that are never called", file=sys.stderr)
         print("", file=sys.stderr)
         print("Type-aware queries (Phase 1d):", file=sys.stderr)
         print("  find_functions_using_table <table>  - Find functions using a database table", file=sys.stderr)
@@ -581,6 +599,10 @@ def main():
             
             elif command == "find_function_dependents" and len(sys.argv) > 3:
                 results = find_function_dependents(db_file, sys.argv[3])
+                print(json.dumps(results, indent=2))
+            
+            elif command == "find_dead_code":
+                results = find_dead_code(db_file)
                 print(json.dumps(results, indent=2))
             
             # Type-aware queries (Phase 1d)

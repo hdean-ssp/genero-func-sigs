@@ -32,6 +32,7 @@ Signature queries (workspace.db):
   list-file-functions <path>          List all functions in a file
   find-function-dependencies <name>   Find all functions called by a function
   find-function-dependents <name>     Find all functions that call a function
+  find-dead-code                      Find functions that are never called
 
 Module queries (modules.db):
   find-module <name>                  Find module by exact name
@@ -119,6 +120,9 @@ case "$command" in
         ;;
     find-function-dependents)
         python3 "$PROJECT_ROOT/scripts/query_db.py" find_function_dependents "$SIGNATURES_DB" "$@"
+        ;;
+    find-dead-code)
+        python3 "$PROJECT_ROOT/scripts/query_db.py" find_dead_code "$SIGNATURES_DB"
         ;;
     find-functions-in-module)
         python3 "$PROJECT_ROOT/scripts/query_db.py" find_functions_in_module "$MODULES_DB" "$SIGNATURES_DB" "$@"

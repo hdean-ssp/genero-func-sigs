@@ -298,12 +298,17 @@ See [INTEGRATION_GUIDE.md](docs/INTEGRATION_GUIDE.md) for implementation example
 
 ## Planned Enhancements
 
-The project roadmap focuses on advanced analysis capabilities:
+The project is nearing completion with core analysis capabilities established. Future development focuses on tooling integration:
 
-**Phase 3 (Next - Advanced Analysis):**
-- Circular dependency detection - Find problematic call cycles
-- Code duplication analysis - Identify similar/duplicate functions
-- Performance metrics - Track function complexity over time
-- Visualization exports - Generate architecture diagrams
+**Phase 3 (Next - Tooling Integration):**
+- Vim plugin for IDE integration - Query interface for Vim editor
+- VS Code extension - Code lens and hover information
+- Other editor integrations - Generic query API for any editor
 
-See [QUERY_LAYER_GUIDE.md](docs/QUERY_LAYER_GUIDE.md) for Phase 2 implementation details.
+**Deferred/Out of Scope:**
+- Code duplication analysis - Requires full function body analysis (unrealistic for 6M+ LOC codebases)
+- Unresolved call detection - Compiler already handles this
+- Circular dependency detection - Not a priority for current use cases
+- Visualization exports - Better as separate project for large codebases
+
+See [FEATURES.md](docs/FEATURES.md) for complete feature list.
