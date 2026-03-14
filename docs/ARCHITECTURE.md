@@ -490,8 +490,8 @@ VERBOSE=1 bash generate_signatures.sh /path/to/code
 # Check intermediate files
 cat workspace.json | python3 -m json.tool | head -50
 
-# Query database directly
-sqlite3 workspace.db "SELECT * FROM functions LIMIT 10"
+# Query database using Python
+python3 -c "import sqlite3; conn=sqlite3.connect('workspace.db'); c=conn.cursor(); c.execute('SELECT * FROM functions LIMIT 10'); print([dict(row) for row in c.fetchall()])"
 ```
 
 ### Performance Optimization

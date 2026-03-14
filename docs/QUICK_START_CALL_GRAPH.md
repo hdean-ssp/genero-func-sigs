@@ -239,28 +239,46 @@ Result: `process_request` depends on 3 functions.
 
 Find functions called by many others:
 
-```bash
-sqlite3 workspace.db << 'EOF'
-SELECT c.called_function_name, COUNT(*) as call_count
+```python
+import sqlite3
+import json
+
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+c.execute('''SELECT c.called_function_name, COUNT(*) as call_count
 FROM calls c
 GROUP BY c.called_function_name
 ORDER BY call_count DESC
-LIMIT 10;
-EOF
+LIMIT 10''')
+
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+conn.close()
 ```
 
 ### Example 4: Dead Code Detection
 
 Find functions never called:
 
-```bash
-sqlite3 workspace.db << 'EOF'
-SELECT f.name, fi.path
+```python
+import sqlite3
+import json
+
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+c.execute('''SELECT f.name, fi.path
 FROM functions f
 JOIN files fi ON f.file_id = fi.id
 WHERE f.name NOT IN (SELECT DISTINCT called_function_name FROM calls)
-ORDER BY f.name;
-EOF
+ORDER BY f.name''')
+
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+conn.close()
 ```
 
 ## Limitations

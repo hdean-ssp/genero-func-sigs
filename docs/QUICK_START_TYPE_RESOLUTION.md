@@ -180,11 +180,18 @@ RESOLVE_TYPES=1 bash src/generate_signatures.sh /path/to/codebase
 **Problem**: Type resolution is slow
 
 **Solution**: Ensure schema is indexed:
-```bash
-sqlite3 workspace.db << 'EOF'
-CREATE INDEX IF NOT EXISTS idx_schema_tables_name ON schema_tables(name);
-CREATE INDEX IF NOT EXISTS idx_schema_columns_table_id ON schema_columns(table_id);
-EOF
+```python
+import sqlite3
+
+conn = sqlite3.connect('workspace.db')
+c = conn.cursor()
+
+c.execute('CREATE INDEX IF NOT EXISTS idx_schema_tables_name ON schema_tables(name)')
+c.execute('CREATE INDEX IF NOT EXISTS idx_schema_columns_table_id ON schema_columns(table_id)')
+
+conn.commit()
+conn.close()
+print("Indexes created successfully")
 ```
 
 ## Next Steps

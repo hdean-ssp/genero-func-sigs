@@ -161,23 +161,35 @@ files = find_files_by_reference('workspace.db', 'PRB-299')
 expertise = find_author_expertise('workspace.db', 'Rich')
 ```
 
-### Using SQL directly
+### Using Python with sqlite3
 
-```bash
-sqlite3 workspace.db << 'EOF'
--- Find all references by an author
-SELECT reference_id, change_date, description
+```python
+import sqlite3
+import json
+
+# Find all references by an author
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+c.execute('''SELECT reference_id, change_date, description
 FROM file_references
-WHERE author = 'Rich'
-ORDER BY change_date DESC;
+WHERE author = ?
+ORDER BY change_date DESC''', ('Rich',))
 
--- Find most active authors
-SELECT author, COUNT(*) as change_count
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+
+# Find most active authors
+c.execute('''SELECT author, COUNT(*) as change_count
 FROM file_references
 GROUP BY author
-ORDER BY change_count DESC;
+ORDER BY change_count DESC''')
 
--- Find files with most changes
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+
+# Find files with most changes
 SELECT f.path, COUNT(*) as change_count
 FROM file_references fr
 JOIN files f ON fr.file_id = f.id

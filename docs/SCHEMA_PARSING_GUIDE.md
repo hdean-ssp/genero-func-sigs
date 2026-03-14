@@ -165,10 +165,24 @@ python3 scripts/json_to_sqlite_schema.py schema.json workspace.db
 
 ### Step 3: Verify Schema
 
-```bash
+```python
+import sqlite3
+import json
+
 # Query schema tables
-sqlite3 workspace.db "SELECT * FROM schema_tables;"
-sqlite3 workspace.db "SELECT * FROM schema_columns WHERE table_id = 1;"
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+c.execute("SELECT * FROM schema_tables")
+tables = [dict(row) for row in c.fetchall()]
+print(json.dumps(tables, indent=2))
+
+c.execute("SELECT * FROM schema_columns WHERE table_id = 1")
+columns = [dict(row) for row in c.fetchall()]
+print(json.dumps(columns, indent=2))
+
+conn.close()
 ```
 
 ### Step 4: Use for Type Resolution
@@ -233,23 +247,34 @@ python3 scripts/json_to_sqlite_schema.py schema.json workspace.db
 
 ### 4. Verify
 
-```bash
-sqlite3 workspace.db << 'EOF'
-SELECT st.name, sc.column_name, sc.column_type
+```python
+import sqlite3
+import json
+
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+
+c.execute('''SELECT st.name, sc.column_name, sc.column_type
 FROM schema_tables st
 JOIN schema_columns sc ON st.id = sc.table_id
-ORDER BY st.name, sc.id;
-EOF
+ORDER BY st.name, sc.id''')
+
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+conn.close()
 ```
 
 Output:
-```
-account|id|INTEGER
-account|name|VARCHAR(100)
-account|balance|DECIMAL(10)
-account|created_date|DATE
-customer|id|INTEGER
-customer|email|VARCHAR(255)
+```json
+[
+  {"name": "account", "column_name": "id", "column_type": "INTEGER"},
+  {"name": "account", "column_name": "name", "column_type": "VARCHAR(100)"},
+  {"name": "account", "column_name": "balance", "column_type": "DECIMAL(10)"},
+  {"name": "account", "column_name": "created_date", "column_type": "DATE"},
+  {"name": "customer", "column_name": "id", "column_type": "INTEGER"},
+  {"name": "customer", "column_name": "email", "column_type": "VARCHAR(255)"}
+]
 ```
 
 ### 5. Use for Type Resolution
@@ -294,11 +319,18 @@ head database.sch
 **Problem**: Schema queries are slow
 
 **Solution**: Ensure indexes are created:
-```bash
-sqlite3 workspace.db << 'EOF'
-CREATE INDEX IF NOT EXISTS idx_schema_tables_name ON schema_tables(name);
-CREATE INDEX IF NOT EXISTS idx_schema_columns_table_id ON schema_columns(table_id);
-EOF
+```python
+import sqlite3
+
+conn = sqlite3.connect('workspace.db')
+c = conn.cursor()
+
+c.execute('CREATE INDEX IF NOT EXISTS idx_schema_tables_name ON schema_tables(name)')
+c.execute('CREATE INDEX IF NOT EXISTS idx_schema_columns_table_id ON schema_columns(table_id)')
+
+conn.commit()
+conn.close()
+print("Indexes created successfully")
 ```
 
 ## Performance Characteristics

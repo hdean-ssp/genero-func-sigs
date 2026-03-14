@@ -156,23 +156,44 @@ bash query.sh create-modules-db
 
 ## Advanced Queries
 
-For complex queries, use sqlite3 directly:
+For complex queries, use Python with sqlite3:
 
-```bash
+```python
+import sqlite3
+import json
+
 # Find all functions with STRING parameters
-sqlite3 workspace.db "SELECT DISTINCT f.name FROM functions f 
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+c.execute('''SELECT DISTINCT f.name FROM functions f 
   JOIN parameters p ON f.id = p.function_id 
-  WHERE p.type = 'STRING'"
+  WHERE p.type = 'STRING' ''')
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+conn.close()
 
 # Find modules with most files
-sqlite3 modules.db "SELECT m.name, COUNT(*) as file_count FROM modules m 
+conn = sqlite3.connect('modules.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+c.execute('''SELECT m.name, COUNT(*) as file_count FROM modules m 
   JOIN module_files mf ON m.id = mf.module_id 
-  GROUP BY m.id ORDER BY file_count DESC LIMIT 10"
+  GROUP BY m.id ORDER BY file_count DESC LIMIT 10''')
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+conn.close()
 
 # Find functions in specific file type
-sqlite3 workspace.db "SELECT f.name, f.signature FROM functions f 
+conn = sqlite3.connect('workspace.db')
+conn.row_factory = sqlite3.Row
+c = conn.cursor()
+c.execute('''SELECT f.name, f.signature FROM functions f 
   JOIN files fi ON f.file_id = fi.id 
-  WHERE fi.type = 'L4GLS' LIMIT 20"
+  WHERE fi.type = 'L4GLS' LIMIT 20''')
+results = [dict(row) for row in c.fetchall()]
+print(json.dumps(results, indent=2))
+conn.close()
 ```
 
 ## Troubleshooting
@@ -189,7 +210,17 @@ bash query.sh create-dbs
 ```
 
 **Want to see raw database:**
-```bash
-sqlite3 workspace.db ".schema"
-sqlite3 workspace.db ".tables"
+```python
+import sqlite3
+
+# List all tables
+conn = sqlite3.connect('workspace.db')
+c = conn.cursor()
+c.execute("SELECT name FROM sqlite_master WHERE type='table'")
+tables = [row[0] for row in c.fetchall()]
+print("Tables:", tables)
+
+# Get database schema
+c.execute(".schema")
+conn.close()
 ```
