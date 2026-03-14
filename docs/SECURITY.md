@@ -1,6 +1,6 @@
 # Security Practices
 
-This document outlines the security practices and considerations for the genero-func-sigs project.
+This document outlines the security practices and considerations for the genero-tools project.
 
 ## Overview
 

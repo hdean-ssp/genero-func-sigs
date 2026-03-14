@@ -21,7 +21,7 @@ This guide is for developers and AI agents working on the Genero Function Signat
 ## Directory Structure
 
 ```
-genero-func-sigs/
+genero-tools/
 ├── src/                          # Main generation scripts
 │   ├── generate_signatures.sh     # Extract function signatures from .4gl
 │   ├── generate_modules.sh        # Parse module dependencies from .m3

@@ -1,4 +1,4 @@
-# genero-func-sigs
+# genero-tools
 Comprehensive codebase analysis tool that extracts and indexes rich metadata from Genero/4GL codebases to enable IDE/editor integration, AI-powered code review, and developer tooling.
 
 ## Features

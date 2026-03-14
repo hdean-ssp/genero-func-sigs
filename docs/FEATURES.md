@@ -1,6 +1,6 @@
 # Features Guide
 
-Comprehensive overview of all genero-func-sigs features with examples.
+Comprehensive overview of all genero-tools features with examples.
 
 ## Function Signatures
 

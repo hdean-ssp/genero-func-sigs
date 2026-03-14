@@ -1,6 +1,6 @@
 # Documentation Index
 
-Quick reference for genero-func-sigs documentation.
+Quick reference for genero-tools documentation.
 
 ## Essential Reading
 
