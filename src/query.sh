@@ -52,7 +52,8 @@ Header/Reference queries (workspace.db):
   file-authors <path>                 Get all authors who modified a file
   author-expertise <author>           Show what areas an author has expertise in
   recent-changes [days]               Find files modified in last N days (default 30)
-  search-references <pattern>         Search references by pattern
+  search-references <pattern>         Search references by pattern (partial match)
+  search-reference-prefix <prefix>    Search references by prefix (e.g., "EH100512" finds "EH100512-9a")
 
 Database management:
   create-dbs                          Create both databases from JSON files
@@ -182,6 +183,9 @@ case "$command" in
         ;;
     search-references)
         python3 "$PROJECT_ROOT/scripts/query_headers.py" search-references "$SIGNATURES_DB" "$@"
+        ;;
+    search-reference-prefix)
+        python3 "$PROJECT_ROOT/scripts/query_headers.py" search-reference-prefix "$SIGNATURES_DB" "$@"
         ;;
     *)
         echo "Unknown command: $command" >&2

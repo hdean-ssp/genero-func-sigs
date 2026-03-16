@@ -3,7 +3,6 @@
 FUNCTION process_interval(time_span)
 	DEFINE time_span INTERVAL DAY TO HOUR
 	DEFINE result INTEGER
-	
 	LET result = 24
 	CALL log_interval(time_span)
 	RETURN result

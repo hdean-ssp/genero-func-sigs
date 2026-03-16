@@ -211,9 +211,14 @@ def search_references(db_file: str, pattern: str) -> List[Dict]:
     """
     Search for code references matching a pattern.
     
+    Supports multiple search modes:
+    - Exact match: "EH100512" returns only "EH100512"
+    - Partial match: "100512" returns "EH100512", "EH100512-9a", "EH100512-15", etc.
+    - Wildcard: "EH%" returns all references starting with "EH"
+    
     Args:
         db_file: Path to SQLite database
-        pattern: Pattern to search for (supports % and _ wildcards)
+        pattern: Pattern to search for (supports % and _ wildcards, or partial numeric strings)
         
     Returns:
         List of matching references
@@ -223,13 +228,56 @@ def search_references(db_file: str, pattern: str) -> List[Dict]:
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
+        # If pattern doesn't contain wildcards, treat it as a partial match
+        # This allows "100512" to match "EH100512", "EH100512-9a", etc.
+        if '%' not in pattern and '_' not in pattern:
+            # Add wildcards to match references containing this pattern
+            search_pattern = f"%{pattern}%"
+        else:
+            search_pattern = pattern
+        
         cursor.execute("""
             SELECT DISTINCT f.path, fr.reference_id, fr.author, fr.change_date, fr.description
             FROM file_references fr
             JOIN files f ON fr.file_id = f.id
             WHERE fr.reference_id LIKE ?
             ORDER BY f.path, fr.change_date DESC
-        """, (pattern,))
+        """, (search_pattern,))
+        
+        results = [dict(row) for row in cursor.fetchall()]
+        conn.close()
+        return results
+    except Exception as e:
+        print(f"Error querying database: {e}", file=sys.stderr)
+        return []
+
+
+def search_reference_prefix(db_file: str, prefix: str) -> List[Dict]:
+    """
+    Search for code references starting with a specific prefix.
+    
+    Args:
+        db_file: Path to SQLite database
+        prefix: Prefix to search for (e.g., "EH100512" finds "EH100512", "EH100512-9a", etc.)
+        
+    Returns:
+        List of matching references
+    """
+    try:
+        conn = sqlite3.connect(db_file)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        # Search for references that start with the prefix or contain it as a component
+        search_pattern = f"{prefix}%"
+        
+        cursor.execute("""
+            SELECT DISTINCT f.path, fr.reference_id, fr.author, fr.change_date, fr.description
+            FROM file_references fr
+            JOIN files f ON fr.file_id = f.id
+            WHERE fr.reference_id LIKE ?
+            ORDER BY f.path, fr.change_date DESC
+        """, (search_pattern,))
         
         results = [dict(row) for row in cursor.fetchall()]
         conn.close()
@@ -251,6 +299,7 @@ def main():
         print("  author-expertise <author>", file=sys.stderr)
         print("  recent-changes [days]", file=sys.stderr)
         print("  search-references <pattern>", file=sys.stderr)
+        print("  search-reference-prefix <prefix>", file=sys.stderr)
         sys.exit(1)
     
     command = sys.argv[1]
@@ -273,6 +322,8 @@ def main():
         results = find_recent_changes(db_file, days)
     elif command == "search-references" and len(sys.argv) > 3:
         results = search_references(db_file, sys.argv[3])
+    elif command == "search-reference-prefix" and len(sys.argv) > 3:
+        results = search_reference_prefix(db_file, sys.argv[3])
     else:
         print(f"Unknown command: {command}", file=sys.stderr)
         sys.exit(1)
