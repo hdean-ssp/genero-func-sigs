@@ -626,6 +626,15 @@ def main():
                     print(f"Parameter '{sys.argv[4]}' not found in function '{sys.argv[3]}'", file=sys.stderr)
                     sys.exit(1)
             
+            elif command == "find_function_resolved" and len(sys.argv) > 3:
+                # Query function with resolved types from workspace_resolved.json
+                result = query_function_resolved(db_file, sys.argv[3])
+                if result:
+                    print(json.dumps(result, indent=2))
+                else:
+                    print(f"Function '{sys.argv[3]}' not found", file=sys.stderr)
+                    sys.exit(1)
+            
             else:
                 print(f"Error: Unknown command or missing arguments", file=sys.stderr)
                 sys.exit(1)
@@ -636,3 +645,26 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def query_function_resolved(workspace_resolved_path, func_name):
+    """Query function with resolved types from workspace_resolved.json."""
+    try:
+        with open(workspace_resolved_path, 'r') as f:
+            workspace_resolved = json.load(f)
+    except FileNotFoundError:
+        return None
+    except json.JSONDecodeError:
+        return None
+    
+    # Search for the function across all files
+    for file_path, functions in workspace_resolved.items():
+        if file_path == '_metadata':
+            continue
+        
+        if isinstance(functions, list):
+            for func in functions:
+                if func.get('name') == func_name:
+                    return func
+    
+    return None

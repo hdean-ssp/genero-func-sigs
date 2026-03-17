@@ -28,6 +28,7 @@ Usage: query.sh <command> [args...]
 
 Signature queries (workspace.db):
   find-function <name>                Find function by exact name
+  find-function-resolved <name>       Find function with resolved LIKE types
   search-functions <pattern>          Search functions by name pattern
   list-file-functions <path>          List all functions in a file
   find-function-dependencies <name>   Find all functions called by a function
@@ -115,6 +116,14 @@ shift
 case "$command" in
     find-function)
         python3 "$PROJECT_ROOT/scripts/query_db.py" find_function "$SIGNATURES_DB" "$@"
+        ;;
+    find-function-resolved)
+        # Query function with resolved types from workspace_resolved.json
+        WORKSPACE_RESOLVED="${WORKSPACE_RESOLVED:-workspace_resolved.json}"
+        if [[ ! -f "$WORKSPACE_RESOLVED" && -f "$PROJECT_ROOT/workspace_resolved.json" ]]; then
+            WORKSPACE_RESOLVED="$PROJECT_ROOT/workspace_resolved.json"
+        fi
+        python3 "$PROJECT_ROOT/scripts/query_db.py" find_function_resolved "$WORKSPACE_RESOLVED" "$@"
         ;;
     search-functions)
         python3 "$PROJECT_ROOT/scripts/query_db.py" search_functions "$SIGNATURES_DB" "$@"

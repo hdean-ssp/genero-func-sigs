@@ -1,12 +1,12 @@
 {
   "_metadata": {
     "version": "1.0.0",
-    "generated": "2026-03-16T13:51:11Z",
+    "generated": "2026-03-17T11:40:48Z",
     "files_processed": 9
   },
   "modules": [
     {
-      "file": "./minimal.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/minimal.m3",
       "module": "minimal",
       "L4GLS": [],
       "U4GLS": [],
@@ -16,7 +16,7 @@
       ]
     },
     {
-      "file": "./mixed_files.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/mixed_files.m3",
       "module": "mixed_files",
       "L4GLS": [
         "lib_core.4gl",
@@ -31,7 +31,7 @@
       ]
     },
     {
-      "file": "./test_mapping.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/test_mapping.m3",
       "module": "test_mapping",
       "L4GLS": [
         "complex_types.4gl",
@@ -46,7 +46,7 @@
       ]
     },
     {
-      "file": "./whitespace.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/whitespace.m3",
       "module": "whitespace",
       "L4GLS": [
         "lib_a.4gl",
@@ -64,7 +64,7 @@
       ]
     },
     {
-      "file": "./modules/multiline.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/modules/multiline.m3",
       "module": "multiline",
       "L4GLS": [
         "lib_auth.4gl",
@@ -88,7 +88,7 @@
       ]
     },
     {
-      "file": "./modules/test.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/modules/test.m3",
       "module": "test",
       "L4GLS": [
         "liberr.4gl",
@@ -191,7 +191,7 @@
       ]
     },
     {
-      "file": "./comments.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/comments.m3",
       "module": "comments",
       "L4GLS": [
         "lib_report.4gl",
@@ -206,14 +206,14 @@
       ]
     },
     {
-      "file": "./empty.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/empty.m3",
       "module": "empty",
       "L4GLS": [],
       "U4GLS": [],
       "4GLS": []
     },
     {
-      "file": "./single_line.m3",
+      "file": "./genero-func-sigs/tests/sample_codebase/single_line.m3",
       "module": "single_line",
       "L4GLS": [
         "lib_util.4gl",
