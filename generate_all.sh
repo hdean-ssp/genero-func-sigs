@@ -231,6 +231,13 @@ if [[ "${RESOLVE_TYPES:-0}" == "1" ]]; then
     
     if python3 "$SCRIPT_DIR/scripts/resolve_types.py" workspace.db workspace.json workspace_resolved.json 2>/dev/null; then
         log_success "Type-resolved signatures generated (workspace_resolved.json)"
+        
+        # Merge resolved types back into database for fast querying
+        if python3 "$SCRIPT_DIR/scripts/merge_resolved_types.py" workspace_resolved.json workspace.db 2>/dev/null; then
+            log_success "Resolved types merged into workspace.db"
+        else
+            log_info "Could not merge resolved types into database (JSON queries still available)"
+        fi
     else
         log_info "Could not generate type-resolved signatures (continuing)"
     fi

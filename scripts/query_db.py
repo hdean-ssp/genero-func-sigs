@@ -20,9 +20,22 @@ def query_function(db_file, func_name):
     for row in c.fetchall():
         result = dict(row)
         
-        # Get parameters
-        c.execute('SELECT name, type FROM parameters WHERE function_id = ?', (row['id'],))
-        result['parameters'] = [dict(p) for p in c.fetchall()]
+        # Get parameters with resolved type information
+        c.execute('''SELECT name, type, actual_type, is_like_reference, resolved, 
+                            resolution_error, table_name, columns, types 
+                     FROM parameters WHERE function_id = ?''', (row['id'],))
+        result['parameters'] = []
+        for p in c.fetchall():
+            param = dict(p)
+            # Parse JSON fields if present
+            if param['types']:
+                try:
+                    param['types'] = json.loads(param['types'])
+                except (json.JSONDecodeError, TypeError):
+                    pass
+            if param['columns']:
+                param['columns'] = param['columns'].split(',')
+            result['parameters'].append(param)
         
         # Get returns
         c.execute('SELECT name, type FROM returns WHERE function_id = ?', (row['id'],))
